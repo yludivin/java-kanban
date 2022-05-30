@@ -5,10 +5,16 @@ import enumclass.Status;
 import java.util.Objects;
 
 public class Task {
-    private Integer id;
-    private String name;
-    private String description;
-    private Status status;
+    protected Integer id;
+    protected String name;
+    protected String description;
+    protected Status status;
+    private String typeTask = "Задача";
+
+
+    public Task(){
+
+    }
 
     public Task(Integer id, String name, String description) {
         this.id = id;
@@ -17,10 +23,11 @@ public class Task {
         this.status = Status.NEW;
     }
 
-    public Task(Task obj, String name, String description){
+    public Task(Task obj, String name, String description, Status status){
         this.id = obj.getId();
         this.name = name;
         this.description = description;
+        this.status = status;
     }
 
     public String getName() {
@@ -39,9 +46,13 @@ public class Task {
         return id;
     }
 
+    public String getTypeTask() {
+        return this.typeTask;
+    }
+
     @Override
     public String toString() {
-        return getName() + ":" + "\t" + getName() + "\n"
+        return getTypeTask() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }
@@ -55,9 +66,10 @@ public class Task {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Task task = (Task) obj;
-        return (id == task.id) &&
-                Objects.equals(name, task.name) &&
-                Objects.equals(description, task.description) &&
-                (status == task.getStatus());
+        return (this.id == task.id) &&
+                Objects.equals(this.name, task.name) &&
+                Objects.equals(this.description, task.description) &&
+                (this.status == task.getStatus()) &&
+                (this.typeTask == task.typeTask);
     }
 }
