@@ -2,21 +2,17 @@ package taskclass;
 
 import enumclass.Status;
 
-import java.util.Objects;
-
 public class Task {
-    protected Integer id;
+    protected int id;
     protected String name;
     protected String description;
     protected Status status;
     private String typeTask = "Задача";
 
-
     public Task(){
-
     }
 
-    public Task(Integer id, String name, String description) {
+    public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -42,7 +38,7 @@ public class Task {
         return status;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
@@ -56,20 +52,19 @@ public class Task {
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }
+
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, status);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Task task = (Task) o;
+
+        return id == task.id;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Task task = (Task) obj;
-        return (this.id == task.id) &&
-                Objects.equals(this.name, task.name) &&
-                Objects.equals(this.description, task.description) &&
-                (this.status == task.getStatus()) &&
-                (this.typeTask == task.typeTask);
+    public int hashCode() {
+        return id;
     }
 }

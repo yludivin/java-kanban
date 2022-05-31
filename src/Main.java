@@ -15,13 +15,13 @@ public class Main {
         Task task2 = taskManager.createNewTask("Убраться к приезду родителей в гостинной",
                 "Все моечные средства в кладовке");
 
-        Epic epic1 = taskManager.createNewEpic("Расчет стоимости проекта дома", "Срок до 15.03.2022");
+        Epic epic1 = (Epic)taskManager.createNewEpic("Расчет стоимости проекта дома", "Срок до 15.03.2022");
 
-        SubTask subTusk1 = taskManager.createNewSubtask("Разработка архитектурного решения",
+        SubTask subTusk1 = (SubTask) taskManager.createNewSubtask("Разработка архитектурного решения",
                 "Срок до 03.02.2022", epic1);
         taskManager.getAllTasksName();
 
-        SubTask subTusk2 = taskManager.createNewSubtask("Раcчет фундамента под архитектуру",
+        SubTask subTusk2 = (SubTask) taskManager.createNewSubtask("Раcчет фундамента под архитектуру",
                 "Срок до 05.02.2022", epic1);
 
         System.out.println("Вношу изменения во все задачи, меняю статусы\n _______________________________________");

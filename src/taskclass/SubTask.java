@@ -2,10 +2,9 @@ package taskclass;
 
 import enumclass.Status;
 
-import java.util.Objects;
-
 public class SubTask extends Task{
-    private Integer EpicId;
+
+    private int EpicId;
     private String typeTask = "Подзадача";
 
     public SubTask(Integer id, String name, String description, Epic epic) {
@@ -33,21 +32,14 @@ public class SubTask extends Task{
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }
+
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, status);
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        SubTask task = (SubTask) obj;
-        return (id == task.id) &&
-                Objects.equals(this.name, task.name) &&
-                Objects.equals(this.description, task.description) &&
-                (this.status == task.getStatus()) &&
-                (this.EpicId == task.getEpicId()) &&
-                (this.typeTask == task.typeTask);
+    public int hashCode() {
+        return super.hashCode();
     }
 }

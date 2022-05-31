@@ -4,7 +4,6 @@ import enumclass.Status;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Epic extends Task {
 
@@ -23,7 +22,7 @@ public class Epic extends Task {
         this.subTaskListId = obj.subTaskListId;
     }
 
-    public Integer getId(){
+    public int getId(){
         return this.id;
     }
 
@@ -39,7 +38,7 @@ public class Epic extends Task {
         this.status = status;
     }
 
-    public void removeSubtuskId(Integer id){
+    public void removeSubtaskId(Integer id){
         subTaskListId.remove(subTaskListId.indexOf(id));
     }
 
@@ -54,21 +53,14 @@ public class Epic extends Task {
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }
+
     @Override
-    public int hashCode() {
-        return Objects.hash(id, name, description, status, subTaskListId, typeTask);
+    public boolean equals(Object o) {
+        return super.equals(o);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Epic task = (Epic) obj;
-        return (this.id == task.id) &&
-                Objects.equals(this.name, task.name) &&
-                Objects.equals(this.description, task.description) &&
-                (this.status == task.getStatus()) &&
-                Objects.equals(this.subTaskListId, task.subTaskListId) &&
-                Objects.equals(this.typeTask, task.typeTask);
+    public int hashCode() {
+        return super.hashCode();
     }
 }
