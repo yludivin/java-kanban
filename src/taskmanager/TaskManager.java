@@ -13,7 +13,7 @@ public class TaskManager {
 
     public TaskManager() {
         this.list = new ArrayList<>();
-        taskId = 0;
+        this.taskId = 0;
     }
 
     public void getAllTasksName(){

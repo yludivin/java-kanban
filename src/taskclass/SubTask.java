@@ -1,11 +1,11 @@
 package taskclass;
 
 import enumclass.Status;
+import enumclass.TypeTask;
 
 public class SubTask extends Task{
 
     private int EpicId;
-    private String typeTask = "Подзадача";
 
     public SubTask(Integer id, String name, String description, Epic epic) {
         super(id, name, description);
@@ -23,7 +23,7 @@ public class SubTask extends Task{
 
     @Override
     public String getTypeTask() {
-        return this.typeTask;
+        return TypeTask.SUB_TASK.getName();
     }
 
     @Override

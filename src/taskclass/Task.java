@@ -1,13 +1,13 @@
 package taskclass;
 
 import enumclass.Status;
+import enumclass.TypeTask;
 
 public class Task {
     protected int id;
     protected String name;
     protected String description;
     protected Status status;
-    private String typeTask = "Задача";
 
     public Task(){
     }
@@ -43,7 +43,7 @@ public class Task {
     }
 
     public String getTypeTask() {
-        return this.typeTask;
+        return TypeTask.TASK.getName();
     }
 
     @Override

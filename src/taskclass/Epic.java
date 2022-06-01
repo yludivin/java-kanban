@@ -1,6 +1,7 @@
 package taskclass;
 
 import enumclass.Status;
+import enumclass.TypeTask;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +9,6 @@ import java.util.List;
 public class Epic extends Task {
 
     private List<Integer> subTaskListId;
-    private String typeTask = "Эпик";
 
     public Epic(Integer id, String name, String description) {
         super(id, name, description);
@@ -44,7 +44,7 @@ public class Epic extends Task {
 
     @Override
     public String getTypeTask() {
-        return this.typeTask;
+        return TypeTask.EPIC.getName();
     }
 
     @Override
