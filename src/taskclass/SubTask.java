@@ -5,20 +5,20 @@ import enumclass.TypeTask;
 
 public class SubTask extends Task{
 
-    private int EpicId;
+    private int epicId;
 
     public SubTask(Integer id, String name, String description, Epic epic) {
         super(id, name, description);
-        this.EpicId = epic.getId();
+        this.epicId = epic.getId();
     }
 
     public SubTask(SubTask obj, String name, String description, Status status){
         super(obj, name, description, status);
-        this.EpicId = obj.EpicId;
+        this.epicId = obj.epicId;
     }
 
     public Integer getEpicId() {
-        return EpicId;
+        return epicId;
     }
 
     @Override
