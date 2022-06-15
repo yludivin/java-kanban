@@ -9,7 +9,7 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public Task(){
+    public Task() {
     }
 
     public Task(int id, String name, String description) {
@@ -19,7 +19,7 @@ public class Task {
         this.status = Status.NEW;
     }
 
-    public Task(Task obj, String name, String description, Status status){
+    public Task(Task obj, String name, String description, Status status) {
         this.id = obj.getId();
         this.name = name;
         this.description = description;
@@ -48,7 +48,7 @@ public class Task {
 
     @Override
     public String toString() {
-        return getTypeTask() + ":" + "\t" + getName() + "\n"
+        return "ID: " + getId() + " " + getTypeTask() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }

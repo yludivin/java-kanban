@@ -15,7 +15,7 @@ public class Epic extends Task {
         subTaskListId = new ArrayList<>();
     }
 
-    public Epic(Epic obj, String name, String description){
+    public Epic(Epic obj, String name, String description) {
         this.id = obj.getId();
         this.name = name;
         this.description = description;
@@ -23,7 +23,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public int getId(){
+    public int getId() {
         return this.id;
     }
 
@@ -35,11 +35,11 @@ public class Epic extends Task {
         return subTaskListId;
     }
 
-    public void setStatus(Status status){
+    public void setStatus(Status status) {
         this.status = status;
     }
 
-    public void removeSubtaskId(Integer id){
+    public void removeSubtaskId(Integer id) {
         subTaskListId.remove(subTaskListId.indexOf(id));
     }
 
@@ -50,7 +50,7 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return getTypeTask() + ":" + "\t" + getName() + "\n"
+        return "ID: " + getId() + " " + getTypeTask() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }
@@ -64,4 +64,6 @@ public class Epic extends Task {
     public int hashCode() {
         return super.hashCode();
     }
+
+
 }

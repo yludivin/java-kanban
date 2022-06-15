@@ -3,7 +3,7 @@ package taskclass;
 import enumclass.Status;
 import enumclass.TypeTask;
 
-public class SubTask extends Task{
+public class SubTask extends Task {
 
     private int epicId;
 
@@ -12,7 +12,7 @@ public class SubTask extends Task{
         this.epicId = epic.getId();
     }
 
-    public SubTask(SubTask obj, String name, String description, Status status){
+    public SubTask(SubTask obj, String name, String description, Status status) {
         super(obj, name, description, status);
         this.epicId = obj.epicId;
     }
@@ -28,7 +28,7 @@ public class SubTask extends Task{
 
     @Override
     public String toString() {
-        return getTypeTask() + ":" + "\t" + getName() + "\n"
+        return "ID: " + getId() + " " + getTypeTask() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }
@@ -41,5 +41,10 @@ public class SubTask extends Task{
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    @Override
+    public int getId() {
+        return this.id;
     }
 }

@@ -17,12 +17,11 @@ public interface TaskManager {
 
     Task createNewEpic(String name, String description);
 
-    void showTaskWithId(Integer id);
+    void getTask(Integer id);
 
     void updateTask(Task abstractTask, String name, String description, Status status);
 
     void deleteWithId(int id);
 
     void allSubtaskFromEpic(Epic epic);
-
 }
