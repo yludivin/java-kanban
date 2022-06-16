@@ -22,13 +22,13 @@ public class SubTask extends Task {
     }
 
     @Override
-    public String getTypeTask() {
-        return TypeTask.SUB_TASK.getName();
+    public TypeTask getTypeTask() {
+        return TypeTask.SUB_TASK;
     }
 
     @Override
     public String toString() {
-        return "ID: " + getId() + " " + getTypeTask() + ":" + "\t" + getName() + "\n"
+        return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }

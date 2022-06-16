@@ -7,7 +7,7 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private List<Task> historyBuffer;
-
+    private final int BUFFER_SIZE = 10;
 
     public InMemoryHistoryManager() {
         this.historyBuffer = new ArrayList<>();
@@ -15,11 +15,13 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     @Override
     public void add(Task task) {
-        if (historyBuffer.size() < 10) {
-            historyBuffer.add(task);
-        } else {
-            historyBuffer.remove(0);
-            historyBuffer.add(task);
+        if(task != null) {
+            if (historyBuffer.size() < BUFFER_SIZE) {
+                historyBuffer.add(task);
+            } else {
+                historyBuffer.remove(0);
+                historyBuffer.add(task);
+            }
         }
     }
 

@@ -44,13 +44,13 @@ public class Epic extends Task {
     }
 
     @Override
-    public String getTypeTask() {
-        return TypeTask.EPIC.getName();
+    public TypeTask getTypeTask() {
+        return TypeTask.EPIC;
     }
 
     @Override
     public String toString() {
-        return "ID: " + getId() + " " + getTypeTask() + ":" + "\t" + getName() + "\n"
+        return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }

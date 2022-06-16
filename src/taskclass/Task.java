@@ -42,13 +42,13 @@ public class Task {
         return id;
     }
 
-    public String getTypeTask() {
-        return TypeTask.TASK.getName();
+    public TypeTask getTypeTask() {
+        return TypeTask.TASK;
     }
 
     @Override
     public String toString() {
-        return "ID: " + getId() + " " + getTypeTask() + ":" + "\t" + getName() + "\n"
+        return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n";
     }

@@ -1,6 +1,7 @@
 package taskmanager;
 
 import enumclass.Status;
+import historymanager.HistoryManager;
 import historymanager.InMemoryHistoryManager;
 import managers.Managers;
 import taskclass.Epic;
@@ -14,15 +15,15 @@ import java.util.Map;
 public class InMemoryTaskManager implements TaskManager {
     private Map<Integer, Task> tasksMap;
     private Integer taskId;
-    InMemoryHistoryManager inMemoryHistoryManager;
+    private HistoryManager inMemoryHistoryManager;
 
     public InMemoryTaskManager() {
         this.tasksMap = new HashMap<>();
         this.taskId = 0;
-        this.inMemoryHistoryManager = (InMemoryHistoryManager) Managers.getDefaultHistory();
+        this.inMemoryHistoryManager = Managers.getDefaultHistory();
     }
 
-    public InMemoryHistoryManager getInMemoryHistoryManager() {
+    public HistoryManager getInMemoryHistoryManager() {
         return inMemoryHistoryManager;
     }
 
@@ -69,25 +70,28 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             System.out.println("Такой задачи нет\n");
         }
-
     }
 
     @Override
-    public void updateTask(Task abstractTask, String name, String description, Status status) {
-        if (abstractTask instanceof Epic) {
-            int taskId = abstractTask.getId();
-            abstractTask = new Epic((Epic) abstractTask, name, description);
-            tasksMap.replace(taskId, abstractTask);
-        } else if (abstractTask instanceof SubTask) {
-            int taskId = abstractTask.getId();
-            abstractTask = new SubTask((SubTask) abstractTask, name, description, status);
-            tasksMap.replace(taskId, abstractTask);
-            int epicId = ((SubTask) abstractTask).getEpicId();
-            refreshStatus(epicId);
-        } else {
-            int taskId = abstractTask.getId();
-            abstractTask = new Task(abstractTask, name, description, status);
-            tasksMap.replace(taskId, abstractTask);
+    public void updateTask(Task task, String name, String description, Status status) {
+        switch(task.getTypeTask()){
+            case TASK:
+                int taskId = task.getId();
+                task = new Task(task, name, description, status);
+                tasksMap.replace(taskId, task);
+                break;
+            case SUB_TASK:
+                int subtaskId = task.getId();
+                task = new SubTask((SubTask) task, name, description, status);
+                tasksMap.replace(subtaskId, task);
+                int epicId = ((SubTask) task).getEpicId();
+                refreshStatus(epicId);
+                break;
+            case EPIC:
+                epicId = task.getId();
+                task = new Epic((Epic) task, name, description);
+                tasksMap.replace(epicId, task);
+                break;
         }
     }
 
