@@ -1,24 +1,19 @@
 import enumclass.Status;
-import managers.Managers;
+import managers.task.Task;
 import taskclass.Epic;
 import taskclass.SubTask;
-import taskclass.Task;
 import taskmanager.InMemoryTaskManager;
 import taskmanager.TaskManager;
-
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getDefault();
+        TaskManager taskManager = Task.getDefault();
 
         System.out.println("Создаю 2 задачи, 1 эпик, 2 подзадачи\n _______________________________________");
 
-        Task task1 = taskManager.createNewTask("Вынести мусор к машине", "Машина приезжает с 6 до 7");
-        Task task2 = taskManager.createNewTask("Убраться к приезду родителей в гостинной",
+        taskclass.Task task1 = taskManager.createNewTask("Вынести мусор к машине", "Машина приезжает с 6 до 7");
+        taskclass.Task task2 = taskManager.createNewTask("Убраться к приезду родителей в гостинной",
                 "Все моечные средства в кладовке");
 
         Epic epic1 = (Epic) taskManager.createNewEpic("Расчет стоимости проекта дома", "Срок до 15.03.2022");

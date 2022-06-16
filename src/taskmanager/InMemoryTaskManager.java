@@ -2,25 +2,24 @@ package taskmanager;
 
 import enumclass.Status;
 import historymanager.HistoryManager;
-import historymanager.InMemoryHistoryManager;
-import managers.Managers;
+import managers.history.History;
+import managers.task.Task;
 import taskclass.Epic;
 import taskclass.SubTask;
-import taskclass.Task;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private Map<Integer, Task> tasksMap;
+    private Map<Integer, taskclass.Task> tasksMap;
     private Integer taskId;
     private HistoryManager inMemoryHistoryManager;
 
     public InMemoryTaskManager() {
         this.tasksMap = new HashMap<>();
         this.taskId = 0;
-        this.inMemoryHistoryManager = Managers.getDefaultHistory();
+        this.inMemoryHistoryManager = History.getDefaultHistory();
     }
 
     public HistoryManager getInMemoryHistoryManager() {
@@ -29,7 +28,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public void getAllTasksName() {
-        for (Map.Entry<Integer, Task> task : tasksMap.entrySet()) {
+        for (Map.Entry<Integer, taskclass.Task> task : tasksMap.entrySet()) {
             System.out.println(task.toString());
         }
     }
@@ -40,30 +39,30 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task createNewTask(String name, String description) {
-        Task task = new Task(++taskId, name, description);
+    public taskclass.Task createNewTask(String name, String description) {
+        taskclass.Task task = new taskclass.Task(++taskId, name, description);
         tasksMap.put(taskId, task);
         return task;
     }
 
     @Override
-    public Task createNewSubtask(String name, String description, Epic epic) {
-        Task subTask = new SubTask(++taskId, name, description, epic);
+    public taskclass.Task createNewSubtask(String name, String description, Epic epic) {
+        taskclass.Task subTask = new SubTask(++taskId, name, description, epic);
         tasksMap.put(taskId, subTask);
         epic.addNewSubTaskId(taskId);
         return subTask;
     }
 
     @Override
-    public Task createNewEpic(String name, String description) {
-        Task epic = new Epic(++taskId, name, description);
+    public taskclass.Task createNewEpic(String name, String description) {
+        taskclass.Task epic = new Epic(++taskId, name, description);
         tasksMap.put(taskId, epic);
         return epic;
     }
 
     @Override
     public void getTask(Integer id) {
-        Task tempTask = tasksMap.get(id);
+        taskclass.Task tempTask = tasksMap.get(id);
         if (tempTask != null) {
             System.out.println(tasksMap.get(id));
             inMemoryHistoryManager.add(tasksMap.get(id));
@@ -73,11 +72,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(Task task, String name, String description, Status status) {
+    public void updateTask(taskclass.Task task, String name, String description, Status status) {
         switch(task.getTypeTask()){
             case TASK:
                 int taskId = task.getId();
-                task = new Task(task, name, description, status);
+                task = new taskclass.Task(task, name, description, status);
                 tasksMap.replace(taskId, task);
                 break;
             case SUB_TASK:
