@@ -9,7 +9,7 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public Task() {
+    public Task() {     //используется в конструкторе эпик taskclass.Epic строка 18
     }
 
     public Task(int id, String name, String description) {

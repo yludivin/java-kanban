@@ -1,4 +1,4 @@
-package historymanager;
+package manager.interfaces;
 
 import taskclass.Task;
 

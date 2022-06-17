@@ -1,4 +1,4 @@
-package taskmanager;
+package manager.interfaces;
 
 import enumclass.Status;
 import taskclass.Epic;

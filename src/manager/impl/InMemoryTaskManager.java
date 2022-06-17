@@ -1,9 +1,9 @@
-package taskmanager;
+package manager.impl;
 
 import enumclass.Status;
-import historymanager.HistoryManager;
-import managers.history.History;
-import managers.task.Task;
+import manager.interfaces.HistoryManager;
+import manager.interfaces.TaskManager;
+import managers.Managers;
 import taskclass.Epic;
 import taskclass.SubTask;
 
@@ -19,7 +19,7 @@ public class InMemoryTaskManager implements TaskManager {
     public InMemoryTaskManager() {
         this.tasksMap = new HashMap<>();
         this.taskId = 0;
-        this.inMemoryHistoryManager = History.getDefaultHistory();
+        this.inMemoryHistoryManager = Managers.getDefaultHistory();
     }
 
     public HistoryManager getInMemoryHistoryManager() {
@@ -72,7 +72,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateTask(taskclass.Task task, String name, String description, Status status) {
+    public void updateTask (taskclass.Task task, String name, String description, Status status) {
         switch(task.getTypeTask()){
             case TASK:
                 int taskId = task.getId();
@@ -108,7 +108,7 @@ public class InMemoryTaskManager implements TaskManager {
                 ((Epic) tasksMap.get(epicId)).removeSubtaskId(id);   //удаляем в списке подзадач Epic подзадачу
                 int subtaskId = tasksMap.get(id).getId();
                 refreshStatus(epicId);
-                tasksMap.remove(id);                                //удаляем подзадачу из менеджера
+                tasksMap.remove(subtaskId);                                //удаляем подзадачу из менеджера
             }
             tasksMap.remove(id);
         } else {

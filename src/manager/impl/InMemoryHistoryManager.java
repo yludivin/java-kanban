@@ -1,5 +1,6 @@
-package historymanager;
+package manager.impl;
 
+import manager.interfaces.HistoryManager;
 import taskclass.Task;
 
 import java.util.ArrayList;
@@ -7,7 +8,7 @@ import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
     private List<Task> historyBuffer;
-    private final int BUFFER_SIZE = 10;
+    private static int BUFFER_SIZE = 10;
 
     public InMemoryHistoryManager() {
         this.historyBuffer = new ArrayList<>();

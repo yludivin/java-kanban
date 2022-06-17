@@ -1,14 +1,14 @@
 import enumclass.Status;
-import managers.task.Task;
+import managers.Managers;
 import taskclass.Epic;
 import taskclass.SubTask;
-import taskmanager.InMemoryTaskManager;
-import taskmanager.TaskManager;
+import manager.impl.InMemoryTaskManager;
+import manager.interfaces.TaskManager;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = Task.getDefault();
+        TaskManager taskManager = Managers.getDefault();
 
         System.out.println("Создаю 2 задачи, 1 эпик, 2 подзадачи\n _______________________________________");
 
