@@ -9,9 +9,6 @@ public class Task {
     protected String description;
     protected Status status;
 
-    public Task() {     //используется в конструкторе эпик taskclass.Epic строка 18
-    }
-
     public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
@@ -19,10 +16,15 @@ public class Task {
         this.status = Status.NEW;
     }
 
-    public Task(Task obj, String name, String description, Status status) {
-        this.id = obj.getId();
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setStatus(Status status) {
         this.status = status;
     }
 

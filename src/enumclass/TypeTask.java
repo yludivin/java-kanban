@@ -7,8 +7,8 @@ public enum TypeTask {
 
     private String name;
 
-    TypeTask(String n) {
-        name = n;
+    TypeTask(String name) {
+        this.name = name;
     }
     public String getName(){
         return name;

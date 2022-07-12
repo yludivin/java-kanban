@@ -75,42 +75,42 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateTask (taskclass.Task task, String name, String description, Status status) {
         switch(task.getTypeTask()){
             case TASK:
-                int taskId = task.getId();
-                task = new taskclass.Task(task, name, description, status);
-                tasksMap.replace(taskId, task);
+            case EPIC:
+                task.setName(name);
+                task.setDescription(description);
+                task.setStatus(status);
                 break;
             case SUB_TASK:
-                int subtaskId = task.getId();
-                task = new SubTask((SubTask) task, name, description, status);
-                tasksMap.replace(subtaskId, task);
+                task.setName(name);
+                task.setDescription(description);
+                task.setStatus(status);
                 int epicId = ((SubTask) task).getEpicId();
-                refreshStatus(epicId);
-                break;
-            case EPIC:
-                epicId = task.getId();
-                task = new Epic((Epic) task, name, description);
-                tasksMap.replace(epicId, task);
-                break;
+                refreshStatus(epicId);      //после создания статус эпика зависит от статусов сабтасков
+                break;                      //у всех остальных типов задач выставляется вручную
         }
     }
 
     @Override
     public void deleteWithId(int id) {
         if (tasksMap.get(id) != null) {
-            if (tasksMap.get(id) instanceof Epic) {
-                Epic epic = (Epic) tasksMap.get(id);
-                List<Integer> subTaskList = epic.getSubTaskListId();
-                for (int idSubTask : subTaskList) {
-                    tasksMap.remove(idSubTask);
-                }
-            } else if (tasksMap.get(id) instanceof SubTask) {
-                int epicId = ((SubTask) tasksMap.get(id)).getEpicId();
-                ((Epic) tasksMap.get(epicId)).removeSubtaskId(id);   //удаляем в списке подзадач Epic подзадачу
-                int subtaskId = tasksMap.get(id).getId();
-                refreshStatus(epicId);
-                tasksMap.remove(subtaskId);                                //удаляем подзадачу из менеджера
+            switch ((tasksMap.get(id)).getTypeTask()){
+                case EPIC:
+                    Epic epic = (Epic) tasksMap.get(id);
+                    List<Integer> subTaskList = epic.getSubTaskListId();
+                    for (int idSubTask : subTaskList) {
+                        tasksMap.remove(idSubTask);
+                    }
+                    break;
+                case SUB_TASK:
+                    int epicId = ((SubTask) tasksMap.get(id)).getEpicId();
+                    ((Epic) tasksMap.get(epicId)).removeSubtaskId(id);   //удаляем в списке подзадач Epic подзадачу
+                    int subtaskId = tasksMap.get(id).getId();
+                    refreshStatus(epicId);
+                    tasksMap.remove(subtaskId);
+                    break;
+                default:
+                    tasksMap.remove(id);
             }
-            tasksMap.remove(id);
         } else {
             System.out.println("Такой задачи не существует");
         }
