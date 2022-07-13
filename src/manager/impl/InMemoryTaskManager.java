@@ -64,7 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void getTask(Integer id) {
         taskclass.Task tempTask = tasksMap.get(id);
         if (tempTask != null) {
-            System.out.println(tasksMap.get(id));
+            //System.out.println(tasksMap.get(id));
             inMemoryHistoryManager.add(tasksMap.get(id));
         } else {
             System.out.println("Такой задачи нет\n");
