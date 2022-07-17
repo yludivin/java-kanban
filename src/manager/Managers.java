@@ -1,4 +1,4 @@
-package managers;
+package manager;
 
 import manager.impl.InMemoryHistoryManager;
 import manager.impl.InMemoryTaskManager;
