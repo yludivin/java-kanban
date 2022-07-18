@@ -8,8 +8,8 @@ import taskclass.Task;
 import java.util.*;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    CustomLinkedList customLinkedList;
-    Map<Integer, CustomLinkedList.Node> taskHashMap;
+    private CustomLinkedList customLinkedList;
+    private Map<Integer, CustomLinkedList.Node> taskHashMap;
 
     public InMemoryHistoryManager() {
         this.customLinkedList = new CustomLinkedList();
@@ -19,21 +19,25 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         Integer taskId = task.getId();
-        if (taskHashMap.containsKey(taskId)) {
-            customLinkedList.removeNode(taskHashMap.get(taskId));
-            customLinkedList.add(task);
-            taskHashMap.put(taskId, customLinkedList.getFirst());
+        if (taskId != null) {
+            if (taskHashMap.containsKey(taskId)) {
+                customLinkedList.removeNode(taskHashMap.get(taskId));
+                customLinkedList.add(task);
+                taskHashMap.put(taskId, customLinkedList.getFirst());
+            } else {
+                customLinkedList.add(task);
+                taskHashMap.put(taskId, customLinkedList.getFirst());
+            }
         } else {
-            customLinkedList.add(task);
-            taskHashMap.put(taskId, customLinkedList.getFirst());
+            System.out.println("Такой задачи не существует");
         }
     }
 
     @Override
     public void remove(int id) {
-        Task task = (Task)taskHashMap.get(id).item;
-        if(task.getTypeTask() == TypeTask.EPIC){
-            List<Integer> subtaskList = ((Epic)task).getSubTaskListId();
+        Task task = (Task) taskHashMap.get(id).item;
+        if (task.getTypeTask() == TypeTask.EPIC) {
+            List<Integer> subtaskList = ((Epic) task).getSubTaskListId();
             for (Integer taskId : subtaskList) {
                 customLinkedList.removeNode(taskHashMap.get(taskId));
             }
@@ -47,39 +51,35 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     private class CustomLinkedList {
-        Task task;
-        Node<Task> first;
-        Node<Task> last;
-        int size = 0;
+        private Node<Task> first;
+        private Node<Task> last;
 
         public void add(Task task) {
             Node newNode;
-            if(first == null){
+            if (first == null) {
                 newNode = new Node(null, task, null);
                 first = newNode;
                 last = newNode;
-            }else{
+            } else {
                 Node nextNode = first;
                 first = new Node(null, task, nextNode);
                 last = nextNode;
                 nextNode.prev = first;
             }
-            this.size++;
         }
 
         public void removeNode(Node node) {
 
-            if(node.prev == null){
+            if (node.prev == null) {
                 node.next.prev = null;
                 this.first = node.next;
-            }else if(node.next == null){
+            } else if (node.next == null) {
                 node.prev.next = null;
                 this.last = node.prev;
-            }else{
+            } else {
                 node.prev.next = node.next;
                 node.next.prev = node.prev;
             }
-            this.size--;
         }
 
         public Node<Task> getFirst() {
