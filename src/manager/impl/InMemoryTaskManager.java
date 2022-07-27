@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager {
-    private Map<Integer, taskclass.Task> tasksMap;
-    private Integer taskId;
-    private HistoryManager inMemoryHistoryManager;
+    protected Map<Integer, taskclass.Task> tasksMap;
+    protected Integer taskId;
+    protected HistoryManager inMemoryHistoryManager;
 
     public InMemoryTaskManager() {
         this.tasksMap = new HashMap<>();
@@ -123,7 +123,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    private void refreshStatus(int epicId) {
+    protected void refreshStatus(int epicId) {
         List<Integer> subTasksId = ((Epic) tasksMap.get(epicId)).getSubTaskListId();
         int doneTasks = 0;
         int newTasks = 0;
