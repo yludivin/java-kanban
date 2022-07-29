@@ -7,6 +7,10 @@ public class SubTask extends Task {
 
     private int epicId;
 
+    public SubTask(Integer id, String name, String description) {           //для создания подзадачи из строки
+        super(id, name, description);
+    }
+
     public SubTask(Integer id, String name, String description, Epic epic) {
         super(id, name, description);
         this.epicId = epic.getId();
@@ -14,6 +18,10 @@ public class SubTask extends Task {
 
     public Integer getEpicId() {
         return epicId;
+    }
+
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 
     @Override

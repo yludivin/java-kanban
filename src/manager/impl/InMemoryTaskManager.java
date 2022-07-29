@@ -33,6 +33,13 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
+    public void fromStringToNodeMap(List<String> tasksOrder){
+        for(int i = 0; i < tasksOrder.size(); i++){
+
+
+        }
+    }
+
     @Override
     public void deleteAll() {
         tasksMap.clear();
@@ -45,6 +52,12 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
+    public taskclass.Task createNewSubtask(String name, String description) {       //для создания подзадачи
+        taskclass.Task subTask = new SubTask(++taskId, name, description);          //из строки
+        tasksMap.put(taskId, subTask);
+        return subTask;
+    }
+    
     @Override
     public taskclass.Task createNewSubtask(String name, String description, Epic epic) {
         taskclass.Task subTask = new SubTask(++taskId, name, description, epic);

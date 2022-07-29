@@ -48,6 +48,10 @@ public class Task {
         return TypeTask.TASK;
     }
 
+    public void setId(int id){
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
