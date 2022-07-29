@@ -26,6 +26,10 @@ public class InMemoryTaskManager implements TaskManager {
         return inMemoryHistoryManager;
     }
 
+    public void setInMemoryHistoryManager(HistoryManager inMemoryHistoryManager) {
+        this.inMemoryHistoryManager = inMemoryHistoryManager;
+    }
+
     @Override
     public void getAllTasksName() {
         for (Map.Entry<Integer, taskclass.Task> task : tasksMap.entrySet()) {

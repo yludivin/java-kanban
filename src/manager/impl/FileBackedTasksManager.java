@@ -132,7 +132,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 task.setId(Integer.valueOf(taskMetadate[0]));
                 task.setStatus(getStatusFromString(taskMetadate[3]));
                 List<Integer> subtasksId = valuesInBrackets(value);
-                ((Epic) task).setSubTaskListId(subtasksId);
+                if(valuesInBrackets(value) != null){
+                    ((Epic) task).setSubTaskListId(subtasksId);
+                }
                 break;
         }
         return task;
@@ -145,6 +147,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] values = valuesInString.split(",");
         List<Integer> result = new LinkedList<>();
         for (int i = 0; i < values.length; i++) {
+            if(values[i].strip() == ""){
+                return null;
+            }
             result.add(Integer.valueOf(values[i].strip()));
         }
         return result;
@@ -175,8 +180,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         String historyInString = stringsFile.get(stringsFile.size() - 1);
         List<Integer> historyIdInStrings = new ArrayList<>(valuesInBrackets(historyInString));
-        newFbtm.inMemoryHistoryManager = loadHistoryManager(historyIdInStrings);
-
+        this.setInMemoryHistoryManager(loadHistoryManager(historyIdInStrings));
+        newFbtm.setInMemoryHistoryManager(loadHistoryManager(historyIdInStrings));
         return newFbtm;
     }
 
@@ -189,7 +194,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (Task task : taskList) {
             inMemoryHistoryManager.add(task);
         }
-
         return inMemoryHistoryManager;
     }
 
@@ -231,6 +235,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         FileBackedTasksManager fbtm2 = new FileBackedTasksManager(
                 Path.of("D:\\yp\\java-kanban\\src\\data\\saveData2.txt"));
 
+
         fbtm2.loadFromFile(Path.of("D:\\yp\\java-kanban\\src\\data\\saveData1.txt"));
+        fbtm2.getTask(6);
+        fbtm2.getTask(1);
     }
 }
