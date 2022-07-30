@@ -1,17 +1,19 @@
 import manager.Managers;
+import manager.impl.FileBackedTasksManager;
 import taskclass.Epic;
 import taskclass.SubTask;
 import manager.impl.InMemoryTaskManager;
 import manager.interfaces.TaskManager;
 import taskclass.Task;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = Managers.getDefault();
+/*        TaskManager taskManager = Managers.getDefault();
 
         System.out.println("Создаю 2 задачи, 1 эпик, 3 подзадачи, 1 эпик пустой\n _______________________________________");
 
@@ -62,7 +64,37 @@ public class Main {
         System.out.println("Удаляю Задачу Id 2 \n _______________________________________");
         deleteTask(taskManager,2);
         System.out.println("Шестой вывод истории \n _______________________________________");
-        getHistory(taskManager);
+        getHistory(taskManager);*/
+
+        FileBackedTasksManager fbtm1 = new FileBackedTasksManager(
+                Path.of("D:\\yp\\java-kanban\\src\\data\\saveData1.txt"));
+        fbtm1.createNewTask("Вынести мусор к машине", "Машина приезжает с 6 до 7");
+        fbtm1.createNewTask("Убраться к приезду родителей в гостинной",
+                "Все моечные средства в кладовке");
+        Epic epic1 = (Epic) fbtm1.createNewEpic("Расчет стоимости проекта дома", "Срок до 15.03.2022");
+        fbtm1.createNewSubtask("Разработка архитектурного решения",
+                "Срок до 03.02.2022", epic1);
+        fbtm1.createNewSubtask("Раcчет фундамента под архитектуру",
+                "Срок до 05.02.2022", epic1);
+        fbtm1.createNewSubtask("Раcчет вентиляции",
+                "Срок до 08.02.2022", epic1);
+
+        Epic epic2 = (Epic) fbtm1.createNewEpic("Формирование списка мебели", "Срок до 17.06.2022");
+
+        fbtm1.getTask(2);
+        fbtm1.getTask(4);
+        fbtm1.getTask(7);
+        fbtm1.getTask(4);
+        fbtm1.getTask(2);
+        fbtm1.getTask(1);
+
+        FileBackedTasksManager fbtm2 = new FileBackedTasksManager(
+                Path.of("D:\\yp\\java-kanban\\src\\data\\saveData2.txt"));
+
+
+        fbtm2.loadFromFile(Path.of("D:\\yp\\java-kanban\\src\\data\\saveData1.txt"));
+        fbtm2.getTask(6);
+        fbtm2.getTask(1);
     }
 
     private static void getHistory(TaskManager taskManager){

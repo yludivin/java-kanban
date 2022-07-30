@@ -2,6 +2,7 @@ package manager.impl;
 
 import enumclass.Status;
 import enumclass.TypeTask;
+import exeptions.ManagerSaveException;
 import manager.interfaces.HistoryManager;
 import taskclass.Epic;
 import taskclass.SubTask;
@@ -64,8 +65,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     fw.write("id,type,name,status,description,epic");
                 }
             } catch (IOException e) {
-                System.out.println("Проблема создания файла данных на ПЗУ");
-                e.getStackTrace();
+                try {
+                    throw new ManagerSaveException("Проблема создания файла данных на ПЗУ");
+                } catch (ManagerSaveException managerSaveException) {
+                    System.out.println(managerSaveException.getMessage());
+                }
             }
         } else {
             try (FileWriter fw = new FileWriter(path.toFile())) {
@@ -74,11 +78,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     newLine = toString(task.getValue());
                     fw.write(newLine);
                 }
-
                 fw.write(toStringHistory());
             } catch (IOException e) {
-                System.out.println("Проблема заполнения файла с задачами на ПЗУ");
-                e.getStackTrace();
+                try {
+                    throw new ManagerSaveException("Проблема создания файла данных на ПЗУ");
+                } catch (ManagerSaveException managerSaveException) {
+                    System.out.println(managerSaveException.getMessage());
+                }
             }
         }
     }
@@ -99,7 +105,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         ((SubTask) task).getEpicId() + "\n";
 
         }
-        return "У задачи неправильный тип";
+        try{
+            throw new ManagerSaveException("У задачи неправильный тип");
+        }catch (ManagerSaveException managerSaveException){
+            System.out.println(managerSaveException.getMessage());
+        }
+        return null;
     }
 
     public String toStringHistory() {
@@ -112,27 +123,27 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public Task fromString(String value) {
-        //id0,type1,name2,status3,description4,epic
+        //id0,type1,name2,status3,description4,epic5
         String[] taskMetadate = value.split(",");
         Task task = null;
-        switch (taskMetadate[1]) {
-            case "TASK":
+        switch (getTypeTaskFromString(taskMetadate[1])) {
+            case TASK:
                 task = createNewTask(taskMetadate[2], taskMetadate[4]);
                 task.setId(Integer.valueOf(taskMetadate[0]));
                 task.setStatus(getStatusFromString(taskMetadate[3]));
                 break;
-            case "SUB_TASK":
+            case SUB_TASK:
                 task = createNewSubtask(taskMetadate[2], taskMetadate[4]);
                 task.setId(Integer.valueOf(taskMetadate[0]));
                 task.setStatus(getStatusFromString(taskMetadate[3]));
                 ((SubTask) task).setEpicId(Integer.valueOf(taskMetadate[5]));
                 break;
-            case "EPIC":
+            case EPIC:
                 task = createNewEpic(taskMetadate[2], taskMetadate[4]);
                 task.setId(Integer.valueOf(taskMetadate[0]));
                 task.setStatus(getStatusFromString(taskMetadate[3]));
                 List<Integer> subtasksId = valuesInBrackets(value);
-                if(valuesInBrackets(value) != null){
+                if (valuesInBrackets(value) != null) {
                     ((Epic) task).setSubTaskListId(subtasksId);
                 }
                 break;
@@ -147,7 +158,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         String[] values = valuesInString.split(",");
         List<Integer> result = new LinkedList<>();
         for (int i = 0; i < values.length; i++) {
-            if(values[i].strip() == ""){
+            if (values[i].strip() == "") {
                 return null;
             }
             result.add(Integer.valueOf(values[i].strip()));
@@ -156,7 +167,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public FileBackedTasksManager loadFromFile(Path file) {
-
         List<String> stringsFile = new LinkedList<>();
         try (FileReader fr = new FileReader(file.toFile());
              BufferedReader br = new BufferedReader(fr)) {
@@ -164,9 +174,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 stringsFile.add(br.readLine());
             }
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            try {
+                throw new ManagerSaveException("Файл не найден");
+            } catch (ManagerSaveException managerSaveException) {
+                System.out.println(managerSaveException.getMessage());
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            try {
+                throw new ManagerSaveException("Проблема при считывании файла с ПЗУ");
+            } catch (ManagerSaveException managerSaveException) {
+                System.out.println(managerSaveException.getMessage());
+            }
         }
 
         FileBackedTasksManager newFbtm = new FileBackedTasksManager(file);
@@ -209,35 +227,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return null;
     }
 
-    public static void main(String[] args) {
-        FileBackedTasksManager fbtm1 = new FileBackedTasksManager(
-                Path.of("D:\\yp\\java-kanban\\src\\data\\saveData1.txt"));
-        fbtm1.createNewTask("Вынести мусор к машине", "Машина приезжает с 6 до 7");
-        fbtm1.createNewTask("Убраться к приезду родителей в гостинной",
-                "Все моечные средства в кладовке");
-        Epic epic1 = (Epic) fbtm1.createNewEpic("Расчет стоимости проекта дома", "Срок до 15.03.2022");
-        fbtm1.createNewSubtask("Разработка архитектурного решения",
-                "Срок до 03.02.2022", epic1);
-        fbtm1.createNewSubtask("Раcчет фундамента под архитектуру",
-                "Срок до 05.02.2022", epic1);
-        fbtm1.createNewSubtask("Раcчет вентиляции",
-                "Срок до 08.02.2022", epic1);
-
-        Epic epic2 = (Epic) fbtm1.createNewEpic("Формирование списка мебели", "Срок до 17.06.2022");
-
-        fbtm1.getTask(2);
-        fbtm1.getTask(4);
-        fbtm1.getTask(7);
-        fbtm1.getTask(4);
-        fbtm1.getTask(2);
-        fbtm1.getTask(1);
-
-        FileBackedTasksManager fbtm2 = new FileBackedTasksManager(
-                Path.of("D:\\yp\\java-kanban\\src\\data\\saveData2.txt"));
-
-
-        fbtm2.loadFromFile(Path.of("D:\\yp\\java-kanban\\src\\data\\saveData1.txt"));
-        fbtm2.getTask(6);
-        fbtm2.getTask(1);
+    private TypeTask getTypeTaskFromString(String line) {
+        switch (line) {
+            case "TASK":
+                return TypeTask.TASK;
+            case "SUB_TASK":
+                return TypeTask.SUB_TASK;
+            case "EPIC":
+                return TypeTask.EPIC;
+        }
+        return null;
     }
 }
