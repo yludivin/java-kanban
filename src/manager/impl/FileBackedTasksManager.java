@@ -65,11 +65,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                     fw.write("id,type,name,status,description,epic");
                 }
             } catch (IOException e) {
-                try {
-                    throw new ManagerSaveException("Проблема создания файла данных на ПЗУ");
-                } catch (ManagerSaveException managerSaveException) {
-                    System.out.println(managerSaveException.getMessage());
-                }
+                throw new ManagerSaveException("Проблема создания файла данных на ПЗУ", e);
             }
         } else {
             try (FileWriter fw = new FileWriter(path.toFile())) {
@@ -80,11 +76,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 }
                 fw.write(toStringHistory());
             } catch (IOException e) {
-                try {
-                    throw new ManagerSaveException("Проблема создания файла данных на ПЗУ");
-                } catch (ManagerSaveException managerSaveException) {
-                    System.out.println(managerSaveException.getMessage());
-                }
+                throw new ManagerSaveException("Проблема создания файла данных на ПЗУ", e);
             }
         }
     }
@@ -105,11 +97,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         ((SubTask) task).getEpicId() + "\n";
 
         }
-        try{
-            throw new ManagerSaveException("У задачи неправильный тип");
-        }catch (ManagerSaveException managerSaveException){
-            System.out.println(managerSaveException.getMessage());
-        }
         return null;
     }
 
@@ -126,27 +113,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         //id0,type1,name2,status3,description4,epic5
         String[] taskMetadate = value.split(",");
         Task task = null;
-        switch (getTypeTaskFromString(taskMetadate[1])) {
-            case TASK:
-                task = createNewTask(taskMetadate[2], taskMetadate[4]);
-                task.setId(Integer.valueOf(taskMetadate[0]));
-                task.setStatus(getStatusFromString(taskMetadate[3]));
-                break;
-            case SUB_TASK:
-                task = createNewSubtask(taskMetadate[2], taskMetadate[4]);
-                task.setId(Integer.valueOf(taskMetadate[0]));
-                task.setStatus(getStatusFromString(taskMetadate[3]));
-                ((SubTask) task).setEpicId(Integer.valueOf(taskMetadate[5]));
-                break;
-            case EPIC:
-                task = createNewEpic(taskMetadate[2], taskMetadate[4]);
-                task.setId(Integer.valueOf(taskMetadate[0]));
-                task.setStatus(getStatusFromString(taskMetadate[3]));
-                List<Integer> subtasksId = valuesInBrackets(value);
-                if (valuesInBrackets(value) != null) {
-                    ((Epic) task).setSubTaskListId(subtasksId);
-                }
-                break;
+        try {
+            switch (TypeTask.valueOf(taskMetadate[1])) {
+                case TASK:
+                    task = createNewTask(taskMetadate[2], taskMetadate[4]);
+                    task.setId(Integer.valueOf(taskMetadate[0]));
+                    task.setStatus(Status.valueOf(taskMetadate[3]));
+                    break;
+                case SUB_TASK:
+                    task = createNewSubtask(taskMetadate[2], taskMetadate[4]);
+                    task.setId(Integer.valueOf(taskMetadate[0]));
+                    task.setStatus(Status.valueOf(taskMetadate[3]));
+                    ((SubTask) task).setEpicId(Integer.valueOf(taskMetadate[5]));
+                    break;
+                case EPIC:
+                    task = createNewEpic(taskMetadate[2], taskMetadate[4]);
+                    task.setId(Integer.valueOf(taskMetadate[0]));
+                    task.setStatus(Status.valueOf(taskMetadate[3]));
+                    List<Integer> subtasksId = valuesInBrackets(value);
+                    if (valuesInBrackets(value) != null) {
+                        ((Epic) task).setSubTaskListId(subtasksId);
+                    }
+                    break;
+            }
+        } catch (ManagerSaveException e) {
+            System.out.println(e.getMessage());
         }
         return task;
     }
@@ -168,23 +159,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public FileBackedTasksManager loadFromFile(Path file) {
         List<String> stringsFile = new LinkedList<>();
-        try (FileReader fr = new FileReader(file.toFile());
-             BufferedReader br = new BufferedReader(fr)) {
-            while (br.ready()) {
-                stringsFile.add(br.readLine());
+        try {
+            try (FileReader fr = new FileReader(file.toFile());
+                 BufferedReader br = new BufferedReader(fr)) {
+                while (br.ready()) {
+                    stringsFile.add(br.readLine());
+                }
+            } catch (FileNotFoundException e) {
+                throw new ManagerSaveException("Файл не найден", e);
+            } catch (IOException e) {
+                throw new ManagerSaveException("Проблема при считывании файла с ПЗУ", e);
             }
-        } catch (FileNotFoundException e) {
-            try {
-                throw new ManagerSaveException("Файл не найден");
-            } catch (ManagerSaveException managerSaveException) {
-                System.out.println(managerSaveException.getMessage());
-            }
-        } catch (IOException e) {
-            try {
-                throw new ManagerSaveException("Проблема при считывании файла с ПЗУ");
-            } catch (ManagerSaveException managerSaveException) {
-                System.out.println(managerSaveException.getMessage());
-            }
+        }catch (ManagerSaveException e){
+            System.out.println(e.getMessage());
         }
 
         FileBackedTasksManager newFbtm = new FileBackedTasksManager(file);
@@ -213,29 +200,5 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             inMemoryHistoryManager.add(task);
         }
         return inMemoryHistoryManager;
-    }
-
-    private Status getStatusFromString(String line) {
-        switch (line) {
-            case "NEW":
-                return Status.NEW;
-            case "IN_PROGRESS":
-                return Status.IN_PROGRESS;
-            case "DONE":
-                return Status.DONE;
-        }
-        return null;
-    }
-
-    private TypeTask getTypeTaskFromString(String line) {
-        switch (line) {
-            case "TASK":
-                return TypeTask.TASK;
-            case "SUB_TASK":
-                return TypeTask.SUB_TASK;
-            case "EPIC":
-                return TypeTask.EPIC;
-        }
-        return null;
     }
 }
