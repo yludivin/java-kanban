@@ -2,29 +2,42 @@ package taskclass;
 
 import enumclass.Status;
 import manager.impl.InMemoryTaskManager;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class EpicTest {
 
-    private static InMemoryTaskManager inMemoryTaskManager;
-    private static Epic epicForTest;
-    private static SubTask subTask1;
-    private static SubTask subTask2;
+    private InMemoryTaskManager inMemoryTaskManager;
+    private Epic epicForTest;
+    private SubTask subTask1;
+    private SubTask subTask2;
 
+    private static final String NAME_TASK = "anyTask";
+    private static final String DESCRIPTION_TASK = "anyTask";
 
-    @BeforeAll
-    static void init(){
-        inMemoryTaskManager = new InMemoryTaskManager();
-        epicForTest = (Epic) inMemoryTaskManager.createNewEpic("Epic1", "TestEpic1");
+    public EpicTest() {
+        this.inMemoryTaskManager = new InMemoryTaskManager();
+        this.epicForTest = (Epic) inMemoryTaskManager.createNewEpic("Epic1", "TestEpic1");
+    }
+
+    @AfterEach
+    void cleanSubtask(){
+        if(epicForTest.getSubTaskListId().size() > 0){
+            for (Integer integer : epicForTest.getSubTaskListId()) {
+                inMemoryTaskManager.deleteWithId(integer);
+            }
+            subTask1 = null;
+            subTask2 = null;
+        }
     }
 
     @Test
-    void shouldReturn0ForEpicAndSubtasks0(){
+     void shouldReturn0ForEpicAndSubtasks0(){
         int expectedLength = 0;
         List<Integer> subtasks = epicForTest.getSubTaskListId();
         assertEquals(expectedLength, subtasks.size(),
@@ -34,48 +47,51 @@ class EpicTest {
     @Test
     void shouldReturnNEWForEpicAndSubtasksNEW(){
         Status expectedStatus = Status.NEW;
-        subTask1 = (SubTask) inMemoryTaskManager.createNewSubtask("subTask1",
-                "subTask1", epicForTest);
-        subTask2 = (SubTask) inMemoryTaskManager.createNewSubtask("subTask2",
-                "subTask2", epicForTest);
-        epicForTest.addNewSubTaskId(subTask1.getId());
-        epicForTest.addNewSubTaskId(subTask2.getId());
+        createSubtask1();
+        createSubtask2();
         assertEquals(expectedStatus, epicForTest.status);
     }
 
     @Test
     void shouldReturnDONEForEpicAndSubtasksDONE(){
         Status expectedStatus = Status.DONE;
-        inMemoryTaskManager.updateTask(subTask1,"subTask1",
-                "subTask1", Status.DONE);
-        inMemoryTaskManager.updateTask(subTask2,"subTask2",
-                "subTask2", Status.DONE);
+        createSubtask1();
+        createSubtask2();
+        inMemoryTaskManager.updateTask(subTask1,NAME_TASK,
+                DESCRIPTION_TASK, Status.DONE);
+        inMemoryTaskManager.updateTask(subTask2,NAME_TASK,
+                DESCRIPTION_TASK, Status.DONE);
         assertEquals(expectedStatus, epicForTest.status);
     }
 
     @Test
-    void shouldReturnIN_PROGRESSForEpicAndSubtasksNEW_DONE(){
+    void shouldReturnIN_PROGRESSForEpicAndSubtasksNEWplusDONE(){
         Status expectedStatus = Status.IN_PROGRESS;
-
-        inMemoryTaskManager.updateTask(subTask1,"subTask1",
-                "subTask1", Status.NEW);
-        inMemoryTaskManager.updateTask(subTask2,"subTask2",
-                "subTask2", Status.DONE);
+        createSubtask1();
+        createSubtask2();
+        inMemoryTaskManager.updateTask(subTask2,NAME_TASK,
+                DESCRIPTION_TASK, Status.DONE);
         assertEquals(expectedStatus, epicForTest.status);
     }
 
+    @Test
+    void shouldReturnIN_PROGRESSForEpicAndSubtasksIN_PROGRESS(){
+        Status expectedStatus = Status.IN_PROGRESS;
+        createSubtask1();
+        createSubtask2();
+        inMemoryTaskManager.updateTask(subTask1,NAME_TASK,
+                DESCRIPTION_TASK, Status.IN_PROGRESS);
+        inMemoryTaskManager.updateTask(subTask2,NAME_TASK,
+                DESCRIPTION_TASK, Status.IN_PROGRESS);
+        assertEquals(expectedStatus, epicForTest.status);
+    }
 
+    public void createSubtask1(){
+        this.subTask1 = (SubTask) this.inMemoryTaskManager.createNewSubtask(NAME_TASK,
+                DESCRIPTION_TASK, epicForTest);
+    }
+    public void createSubtask2(){
+        this.subTask2 = (SubTask) this.inMemoryTaskManager.createNewSubtask(NAME_TASK,
+                DESCRIPTION_TASK, epicForTest);
+    }
 }
-
-
-/*
-    Для расчёта статуса Epic. Граничные условия:
-        a. Пустой список подзадач.
-        b. Все подзадачи со статусом NEW.
-        c. Все подзадачи со статусом DONE.
-        d. Подзадачи со статусами NEW и DONE.
-        e. Подзадачи со статусом IN_PROGRESS.
-        shouldReturn200ForBikeAndDistanceIs20Km
-        shouldThrowExceptionForBikeAndDistanceIs21Km
-
-        */
