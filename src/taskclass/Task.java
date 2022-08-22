@@ -3,17 +3,36 @@ package taskclass;
 import enumclass.Status;
 import enumclass.TypeTask;
 
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 public class Task {
     protected int id;
     protected String name;
     protected String description;
     protected Status status;
+    protected Duration duration;
+    protected LocalDateTime startTime;
+
 
     public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+    }
+
+    public LocalDateTime getEndTime(){
+        return startTime.plusMinutes(duration.toMinutes());
+    }
+
+    public void setDuration(int minutes){
+        this.duration = Duration.ofMinutes(minutes);
+    }
+
+    public void setStartTime(LocalDateTime startTime){
+        this.startTime = startTime;
     }
 
     public void setName(String name) {

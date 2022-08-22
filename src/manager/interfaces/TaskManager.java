@@ -4,6 +4,8 @@ import enumclass.Status;
 import taskclass.Epic;
 import taskclass.Task;
 
+import java.util.Map;
+
 
 public interface TaskManager {
 
@@ -24,4 +26,8 @@ public interface TaskManager {
     void deleteWithId(int id);
 
     void allSubtaskFromEpic(Epic epic);
+
+    Integer getTasksQuantity();
+
+    Map<Integer, Task> getTaskMap();
 }

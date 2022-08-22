@@ -6,6 +6,7 @@ import manager.interfaces.TaskManager;
 import manager.Managers;
 import taskclass.Epic;
 import taskclass.SubTask;
+import taskclass.Task;
 
 import java.util.HashMap;
 import java.util.List;
@@ -159,5 +160,15 @@ public class InMemoryTaskManager implements TaskManager {
         } else {
             tmpEpic.setStatus(Status.IN_PROGRESS);
         }
+    }
+
+    @Override
+    public Integer getTasksQuantity() {
+        return tasksMap.size();
+    }
+
+    @Override
+    public Map<Integer, Task> getTaskMap() {
+        return tasksMap;
     }
 }
