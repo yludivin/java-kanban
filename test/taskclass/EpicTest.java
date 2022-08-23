@@ -1,3 +1,5 @@
+package taskclass;
+
 import enumclass.Status;
 import manager.impl.InMemoryTaskManager;
 import org.junit.jupiter.api.AfterEach;

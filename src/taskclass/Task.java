@@ -27,6 +27,18 @@ public class Task {
         return startTime.plusMinutes(duration.toMinutes());
     }
 
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
     public void setDuration(int minutes){
         this.duration = Duration.ofMinutes(minutes);
     }
@@ -71,11 +83,13 @@ public class Task {
         this.id = id;
     }
 
+
     @Override
     public String toString() {
         return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
-                + "Статус:\t" + getStatus() + "\n";
+                + "Статус:\t" + getStatus() + "\n"
+                + "Завершение:" + getEndTime();
     }
 
     @Override

@@ -1,7 +1,5 @@
-import manager.impl.InMemoryHistoryManager;
-import manager.impl.InMemoryTaskManager;
-import manager.interfaces.TaskManager;
-import org.junit.jupiter.api.Assertions;
+package manager.impl;
+
 import org.junit.jupiter.api.Test;
 import taskclass.Task;
 

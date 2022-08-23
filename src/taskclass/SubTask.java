@@ -33,7 +33,8 @@ public class SubTask extends Task {
     public String toString() {
         return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
-                + "Статус:\t" + getStatus() + "\n";
+                + "Статус:\t" + getStatus() + "\n"
+                +  "Завершение:" + getEndTime();
     }
 
     @Override
