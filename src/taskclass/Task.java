@@ -4,36 +4,47 @@ import enumclass.Status;
 import enumclass.TypeTask;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Task {
-    protected int id;
+    protected Integer id;
     protected String name;
     protected String description;
     protected Status status;
-    protected Duration duration;
-    protected LocalDateTime startTime;
+    protected Duration duration = Duration.ZERO;
+    protected LocalDateTime startTime = LocalDateTime.MIN;
+    protected LocalDateTime endTime = LocalDateTime.MIN;
+    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
 
-    public Task(int id, String name, String description) {
+    public Task(String name, String description, String startTime, long duration) {
+        this.name = name;
+        this.description = description;
+        this.status = Status.NEW;
+        this.startTime = LocalDateTime.parse(startTime, dateTimeFormatter);
+        this.duration = Duration.ofMinutes(duration);
+        this.endTime = this.startTime.plusMinutes(duration);
+    }
+
+/*    public Task(int id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.status = Status.NEW;
+    }*/
+
+    protected Task() {
     }
 
     public LocalDateTime getEndTime(){
-        return startTime.plusMinutes(duration.toMinutes());
+        return endTime;
     }
 
     public Duration getDuration() {
         return duration;
     }
 
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
 
     public LocalDateTime getStartTime() {
         return startTime;
@@ -45,6 +56,14 @@ public class Task {
 
     public void setStartTime(LocalDateTime startTime){
         this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public void calculateEndTime() {
+        this.endTime = startTime.plusMinutes(duration.toMinutes());
     }
 
     public void setName(String name) {
@@ -86,10 +105,16 @@ public class Task {
 
     @Override
     public String toString() {
+        String plug = "Время не установлено";
+        String startWork = (getStartTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getStartTime());
+        String endWork = (getEndTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getEndTime());
+        String duration = (getDuration() == Duration.ZERO) ? plug : getDuration().toMinutes() + "";
         return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n"
-                + "Завершение:" + getEndTime();
+                + "Начало работы:\t" + startWork + "\n"
+                + "Продолжительность(мин):\t" + duration + "\n"
+                + "Завершение:\t" + endWork + "\n";
     }
 
     @Override

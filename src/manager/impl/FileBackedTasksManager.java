@@ -3,7 +3,6 @@ package manager.impl;
 import enumclass.Status;
 import enumclass.TypeTask;
 import exeptions.ManagerSaveException;
-import manager.interfaces.HistoryManager;
 import taskclass.Epic;
 import taskclass.SubTask;
 import taskclass.Task;
@@ -11,6 +10,10 @@ import taskclass.Task;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,6 +21,7 @@ import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     private Path path;
+    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     public FileBackedTasksManager(Path path) {
         super();
@@ -25,28 +29,22 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public Task createNewTask(String name, String description) {
-        Task tmpTask = super.createNewTask(name, description);
-        save();
-        return tmpTask;
-    }
-
-    public Task createNewSubtask(String name, String description) {     //для создания подзадачи из строки
-        Task tmpTask = super.createNewSubtask(name, description);
+    public Task createNewTask(Task task) {
+        Task tmpTask = super.createNewTask(task);
         save();
         return tmpTask;
     }
 
     @Override
-    public Task createNewSubtask(String name, String description, Epic epic) {
-        Task tmpTask = super.createNewSubtask(name, description, epic);
+    public Task createNewSubtask(SubTask subTask) {
+        Task tmpTask = super.createNewSubtask(subTask);
         save();
         return tmpTask;
     }
 
     @Override
-    public Task createNewEpic(String name, String description) {
-        Task tmpTask = super.createNewEpic(name, description);
+    public Task createNewEpic(Epic epic) {
+        Task tmpTask = super.createNewEpic(epic);
         save();
         return tmpTask;
     }
@@ -82,19 +80,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public String toString(Task task) {
-        //id,type,name,status,description,epic
+        //id,type,name,status,description,!<new>starttime,duration,endtime<new>!,epic
         switch (task.getTypeTask()) {
             case EPIC:
                 return task.getId() + "," + task.getTypeTask() + "," + task.getName() + "," +
-                        task.getStatus() + "," + task.getDescription() + "," + "sub tasks - " +
+                        task.getStatus() + "," + task.getDescription() + "," +
+                        task.getStartTime().format(dateTimeFormatter)+ "," +
+                        task.getDuration() + "," + task.getEndTime().format(dateTimeFormatter)+ "," + "sub tasks - " +
                         ((Epic) task).getSubTaskListId().toString() + "\n";
             case TASK:
                 return task.getId() + "," + task.getTypeTask() + "," + task.getName() + "," +
-                        task.getStatus() + "," + task.getDescription() + "\n";
+                        task.getStatus() + "," + task.getDescription() + "," +
+                        task.getStartTime().format(dateTimeFormatter)+ "," +
+                        task.getDuration() + "," + task.getEndTime().format(dateTimeFormatter) + "\n";
             case SUB_TASK:
                 return task.getId() + "," + task.getTypeTask() + "," + task.getName() + "," +
                         task.getStatus() + "," + task.getDescription() + "," +
-                        ((SubTask) task).getEpicId() + "\n";
+                        task.getStartTime().format(dateTimeFormatter)+ "," +
+                        task.getDuration() + "," + task.getEndTime().format(dateTimeFormatter) +
+                        "," + ((SubTask) task).getEpicId() + "\n";
 
         }
         return null;
@@ -108,28 +112,37 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return "\n" + idTasks;
     }
-
+//String name, String description, String startTime, long duration
     public Task fromString(String value) {
-        //id0,type1,name2,status3,description4,epic5
+        //id0,type1,name2,status3,description4,!<new>starttime5,duration6,endtime7<new>!,epic8
         String[] taskMetadate = value.split(",");
         Task task = null;
         switch (TypeTask.valueOf(taskMetadate[1])) {
             case TASK:
-                task = createNewTask(taskMetadate[2], taskMetadate[4]);
+                Task newTask = new Task(taskMetadate[2], taskMetadate[4], taskMetadate[5],
+                        Duration.parse(taskMetadate[6]).toMinutes());
+                task = createNewTask(newTask);
                 task.setId(Integer.valueOf(taskMetadate[0]));
                 task.setStatus(Status.valueOf(taskMetadate[3]));
                 break;
             case SUB_TASK:
-                task = createNewSubtask(taskMetadate[2], taskMetadate[4]);
+                SubTask newSubtask = new SubTask(taskMetadate[2], taskMetadate[4], taskMetadate[5],
+                        Duration.parse(taskMetadate[6]).toMinutes());
+                task = createNewSubtask(newSubtask);
                 task.setId(Integer.valueOf(taskMetadate[0]));
                 task.setStatus(Status.valueOf(taskMetadate[3]));
-                ((SubTask) task).setEpicId(Integer.valueOf(taskMetadate[5]));
+                ((SubTask) task).setEpicId(Integer.valueOf(taskMetadate[8]));
                 break;
             case EPIC:
-                task = createNewEpic(taskMetadate[2], taskMetadate[4]);
+                Epic newEpic = new Epic(taskMetadate[2], taskMetadate[4]);
+                task = createNewEpic(newEpic);
                 task.setId(Integer.valueOf(taskMetadate[0]));
                 task.setStatus(Status.valueOf(taskMetadate[3]));
                 List<Integer> subtasksId = valuesInBrackets(value);
+                setStartEndTimeDuration(task, taskMetadate[5], taskMetadate[6], taskMetadate[7] );
+                /*task.setStartTime(LocalDateTime.parse(taskMetadate[5], dateTimeFormatter));
+                task.setEndTime(LocalDateTime.parse(taskMetadate[7], dateTimeFormatter));
+                task.setDuration((int)Duration.parse(taskMetadate[6]).toMinutes());*/
                 if (valuesInBrackets(value) != null) {
                     ((Epic) task).setSubTaskListId(subtasksId);
                 }
@@ -192,5 +205,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             inMemoryHistoryManager.add(task);
         }
         return inMemoryHistoryManager;
+    }
+
+    void setStartEndTimeDuration(Task task, String startTime, String duration, String endTime){
+        try {
+            task.setStartTime(LocalDateTime.parse(startTime, dateTimeFormatter));
+            task.setEndTime(LocalDateTime.parse(endTime, dateTimeFormatter));
+            task.setDuration((int) Duration.parse(duration).toMinutes());
+        }catch(DateTimeParseException e){
+            task.setStartTime(LocalDateTime.MIN);
+            task.setEndTime(LocalDateTime.MIN);
+            task.setDuration((int)Duration.ZERO.toMinutes());
+        }
     }
 }

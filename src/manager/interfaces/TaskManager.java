@@ -2,9 +2,13 @@ package manager.interfaces;
 
 import enumclass.Status;
 import taskclass.Epic;
+import taskclass.SubTask;
 import taskclass.Task;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.TreeSet;
 
 
 public interface TaskManager {
@@ -13,16 +17,15 @@ public interface TaskManager {
 
     void deleteAll();
 
-    Task createNewTask(String name, String description);
+    Task createNewTask(Task task);
 
-    Task createNewSubtask(String name, String description, Epic epic);
+    Task createNewSubtask(SubTask subTask);
 
-    Task createNewEpic(String name, String description);
+    Task createNewEpic(Epic epic);
 
     void getTask(Integer id);
 
-    void updateTask(Task abstractTask, String name, String description, Status status);
-
+    void updateTask(Task oldTask, Task newTask);
     void deleteWithId(int id);
 
     void allSubtaskFromEpic(Epic epic);
@@ -30,4 +33,6 @@ public interface TaskManager {
     Integer getTasksQuantity();
 
     Map<Integer, Task> getTaskMap();
+
+    TreeSet<Task> getPrioritizedTasks();
 }
