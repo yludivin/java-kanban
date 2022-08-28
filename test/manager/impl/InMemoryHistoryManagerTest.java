@@ -1,13 +1,13 @@
 package manager.impl;
 
 import enumclass.TypeTask;
-import manager.interfaces.HistoryManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import taskclass.Epic;
 import taskclass.SubTask;
 import taskclass.Task;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,13 +22,18 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
     private static final int SUBTASK1_ID = 3;
     private static SubTask subTask2;
     private static final int SUBTASK2_ID = 4;
-
-    private static InMemoryHistoryManager historyManager = new InMemoryHistoryManagerTest();
+    protected static final String NAME_TASK = "anyName";
+    protected static final String DESCRIPTION_TASK = "anyDescription";
+    protected InMemoryTaskManager taskManager;                  // При работе с эпиками подзадачи обращаются к
+                                                                //  EpicId. Без него уже не получится.
+    private static InMemoryHistoryManager historyManager;
     private static String TEXT = "SomeText";
+    protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     @BeforeEach
     void clearHistory(){
         historyManager = new InMemoryHistoryManagerTest();
+        taskManager = new InMemoryTaskManager();
     }
 
     @Test
@@ -38,7 +43,7 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
 
     @Test
     void shouldReturnTrueForHistoryManagerAdd1Task(){   //добавляю задачу в пустой список
-        createTask();
+        taskManager.createNewTask(createTestTask());
         historyManager.add(task);
         List<Task> taskList= historyManager.getHistory();
         boolean condition1 = taskList.size() == 1;
@@ -48,8 +53,8 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
 
     @Test
     void shouldReturnTrueForHistoryManagerAdd1Task1Epic2Subtask(){   //добавляю задачи в пустой список
-        createTask();
-        createEpicAndTwoSubtasks();
+        taskManager.createNewTask(createTestTask());
+        createNewEpicAndTwoNewSubtasksInManeger();
         historyManager.add(task);
         historyManager.add(subTask1);
         historyManager.add(subTask2);
@@ -64,22 +69,22 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
     }
 
     @Test
-    void shouldReturnTrueForHistoryManagerDeleteLast(){        //удаляю последнюю задачу из просмотра
-        createTask();
-        createEpicAndTwoSubtasks();
+    void shouldReturnTrueForHistoryManagerDeleteLast(){        //удаляю эпик и остается только таск
+        taskManager.createNewTask(createTestTask());
+        createNewEpicAndTwoNewSubtasksInManeger();
         historyManager.add(task);
         historyManager.add(subTask1);
         historyManager.add(subTask2);
         historyManager.add(epic);
         historyManager.remove(epic.getId());
         List<Task> taskList = historyManager.getHistory();
-        assertTrue(taskList.get(0).getTypeTask() == TypeTask.SUB_TASK);
+        assertTrue(taskList.get(0).getTypeTask() == TypeTask.TASK);
     }
 
     @Test
     void shouldReturnTrueForHistoryManagerDeleteFirst(){        //удаляю первую задачу из просмотра
-        createTask();
-        createEpicAndTwoSubtasks();
+        taskManager.createNewTask(createTestTask());
+        createNewEpicAndTwoNewSubtasksInManeger();
         historyManager.add(task);
         historyManager.add(subTask1);
         historyManager.add(subTask2);
@@ -91,8 +96,8 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
 
     @Test
     void shouldReturnTrueForHistoryManagerDeleteMiddle(){   //удаляю среднюю задачу из просмотра
-        createTask();
-        createEpicAndTwoSubtasks();
+        taskManager.createNewTask(createTestTask());
+        createNewEpicAndTwoNewSubtasksInManeger();
         historyManager.add(task);
         historyManager.add(subTask1);
         historyManager.add(subTask2);
@@ -107,17 +112,34 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
 
     }
 
-    void createEpicAndTwoSubtasks(){
-        epic = new Epic(EPIC_ID,TEXT,TEXT);
-        subTask1 = new SubTask(SUBTASK1_ID,TEXT,TEXT, epic);
-        subTask2 = new SubTask(SUBTASK2_ID,TEXT,TEXT, epic);
+    public Task createTestTask(){
+        String startTime = "12:20 30-08-2022";
+        long duration = 60;
+        task = new Task(NAME_TASK, DESCRIPTION_TASK, startTime,duration);
+        return task;
     }
 
-    void createTask(){
-        task = new Task(TASK_ID,TEXT,TEXT);
+    public SubTask createTestSubtask1(){
+        String startTime = "12:20 24-08-2022";
+        long duration = 300;
+        subTask1 = new SubTask(NAME_TASK, DESCRIPTION_TASK,startTime,duration, epic);
+        return subTask1;
+    }
+    public SubTask createTestSubtask2(){
+        String startTime = "17:45 24-08-2022";
+        long duration = 400;
+        subTask2 = new SubTask(NAME_TASK, DESCRIPTION_TASK,startTime,duration, epic);
+        return subTask2;
     }
 
-    void fillHistory(){
+    public Epic createTestEpic(){
+        epic = new Epic(NAME_TASK, DESCRIPTION_TASK);
+        return epic;
+    }
 
+    void createNewEpicAndTwoNewSubtasksInManeger(){
+        taskManager.createNewEpic(createTestEpic());
+        taskManager.createNewSubtask(createTestSubtask1());
+        taskManager.createNewSubtask(createTestSubtask2());
     }
 }

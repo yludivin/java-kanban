@@ -7,21 +7,11 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class SubTask extends Task {
-
     private int epicId;
 
     public SubTask(String name, String description,String startTime, long duration, Epic epic) {
         super(name, description,startTime,duration);
         this.epicId = epic.getId();
-    }
-
-    public SubTask(String name, String description, String startTime, long duration) {
-        this.name = name;
-        this.description = description;
-        this.status = Status.NEW;
-        this.startTime = LocalDateTime.parse(startTime, dateTimeFormatter);
-        this.duration = Duration.ofMinutes(duration);
-        this.endTime = this.startTime.plusMinutes(duration);
     }
 
     public Integer getEpicId() {

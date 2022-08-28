@@ -49,7 +49,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public List<Task> getHistory() {
         return customLinkedList.getTasks();
     }
-    //newStart                              //TODO
+
     public CustomLinkedList getCustomLinkedList() {
         return customLinkedList;
     }
@@ -65,7 +65,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     public void setTaskHashMap(Map<Integer, CustomLinkedList.Node> taskHashMap) {
         this.taskHashMap = taskHashMap;
     }
-    //newEnd
+
     private class CustomLinkedList {
         private Node<Task> first;
         private Node<Task> last;

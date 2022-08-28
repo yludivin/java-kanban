@@ -15,7 +15,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
 
     @Test
     void shouldReturnTrueForGetTask() {
-        createNewEpicAndTwoNewSubtasks();
+        createNewEpicAndTwoNewSubtasksInManeger();
         int idEpic = epic.getId();
         int idSubtask1 = subTask1.getId();
         int idSubtask2 = subTask2.getId();

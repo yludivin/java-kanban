@@ -14,38 +14,42 @@ import java.util.List;
 public class Epic extends Task {
 
     private List<Integer> subTaskListId;
-    LocalDateTime endTime = LocalDateTime.of(1970, Month.JANUARY,1,0,0);
-
 
     public Epic(String name, String description) {
-        this.name = name;
-        this.description = description;
-        this.status = Status.NEW;
+        super(name, description, "00:00 01-01-1970", 0);
         subTaskListId = new ArrayList<>();
     }
-
 
     public void calculateEndTime(TaskManager taskManager) {
         LocalDateTime endTime = LocalDateTime.MIN;
         for (Integer integer : subTaskListId) {
-            if(taskManager.getTaskMap().get(integer).getEndTime().isAfter(endTime)){
+            if (!taskManager.getTaskMap().containsKey(integer)) {     //для восстановления с файла когда еще не
+                continue;                                           //подгружены остальные подзадачи
+            }
+            if (taskManager.getTaskMap().get(integer).getEndTime().isAfter(endTime)) {
                 endTime = taskManager.getTaskMap().get(integer).getEndTime();
             }
         }
         this.endTime = endTime;
     }
 
-    public void calculateStartTime(TaskManager taskManager){
+    public void calculateStartTime(TaskManager taskManager) {
         LocalDateTime startTime = LocalDateTime.MAX;
         for (Integer integer : subTaskListId) {
-            if(taskManager.getTaskMap().get(integer).getStartTime().isBefore(startTime)){
+            if (!taskManager.getTaskMap().containsKey(integer)) {     //для восстановления с файла когда еще не
+                continue;                                           //подгружены остальные подзадачи
+            }
+            if (taskManager.getTaskMap().get(integer).getStartTime().isBefore(startTime)) {
                 startTime = taskManager.getTaskMap().get(integer).getStartTime();
             }
         }
         this.startTime = startTime;
     }
 
-    public void calculateDuration(){
+    public void calculateDuration() {
+        if (this.startTime == plugTime || this.endTime == plugTime) {    //для восстановления с файла когда еще не
+            return;                                                     //подгружены остальные подзадачи
+        }
         this.duration = Duration.between(this.startTime, this.endTime);
     }
 
@@ -86,10 +90,10 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String plug = "Эпик без подзадач";
-        String startWork = (getStartTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getStartTime());
-        String endWork = (getEndTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getEndTime());
-        String duration = (getDuration() == Duration.ZERO) ? plug : getDuration().toMinutes() + "";
+        String plugToString = "Эпик без подзадач";
+        String startWork = (getStartTime() == plugTime) ? plugToString : dateTimeFormatter.format(getStartTime());
+        String endWork = (getEndTime() == plugTime) ? plugToString : dateTimeFormatter.format(getEndTime());
+        String duration = (getDuration() == Duration.ZERO) ? plugToString : getDuration().toMinutes() + "";
         return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n"
@@ -107,6 +111,4 @@ public class Epic extends Task {
     public int hashCode() {
         return super.hashCode();
     }
-
-
 }

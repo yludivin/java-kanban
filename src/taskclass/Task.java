@@ -5,6 +5,7 @@ import enumclass.TypeTask;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
 
 public class Task {
@@ -12,11 +13,11 @@ public class Task {
     protected String name;
     protected String description;
     protected Status status;
-    protected Duration duration = Duration.ZERO;
-    protected LocalDateTime startTime = LocalDateTime.MIN;
-    protected LocalDateTime endTime = LocalDateTime.MIN;
+    protected LocalDateTime plugTime = LocalDateTime.of(1970, Month.JANUARY,1,0,0);
+    protected LocalDateTime startTime;
+    protected LocalDateTime endTime;
+    protected Duration duration;
     protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
-
 
     public Task(String name, String description, String startTime, long duration) {
         this.name = name;
@@ -25,16 +26,6 @@ public class Task {
         this.startTime = LocalDateTime.parse(startTime, dateTimeFormatter);
         this.duration = Duration.ofMinutes(duration);
         this.endTime = this.startTime.plusMinutes(duration);
-    }
-
-/*    public Task(int id, String name, String description) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.status = Status.NEW;
-    }*/
-
-    protected Task() {
     }
 
     public LocalDateTime getEndTime(){

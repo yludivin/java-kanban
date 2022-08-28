@@ -159,9 +159,6 @@ public class Main {
         fbtm2.getTask(6);
         fbtm2.getTask(1);
 
-
-
-
     }
 
     private static void getHistory(TaskManager taskManager){

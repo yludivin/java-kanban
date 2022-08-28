@@ -2,9 +2,6 @@ package manager.impl;
 
 import enumclass.Status;
 import enumclass.TypeTask;
-import manager.impl.InMemoryHistoryManager;
-import manager.impl.InMemoryTaskManager;
-import manager.interfaces.HistoryManager;
 import manager.interfaces.TaskManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,8 +9,7 @@ import taskclass.Epic;
 import taskclass.SubTask;
 import taskclass.Task;
 
-import java.util.List;
-import java.util.Set;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,9 +18,11 @@ abstract class TaskManagerTest{
     protected static Epic epic;
     protected static SubTask subTask1;
     protected static SubTask subTask2;
-    protected static final String TEXT = "SomeText";
+    protected static final String NAME_TASK = "anyName";
+    protected static final String DESCRIPTION_TASK = "anyDescription";
 
     protected static TaskManager taskManager;
+    protected static DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     public TaskManagerTest(TaskManager taskManager) {
         this.taskManager = taskManager;
@@ -38,28 +36,29 @@ abstract class TaskManagerTest{
     @Test
     void shouldReturn3ForTaskManagerReturnTasksQuantity(){
         int expectedNumber = 3;
-        taskManager.createNewTask(TEXT,TEXT);
-        epic = (Epic) taskManager.createNewEpic(TEXT,TEXT);
-        taskManager.createNewSubtask(TEXT, TEXT, epic);
+        createTestSubtask1();
+        taskManager.createNewTask(createTestTask());
+        taskManager.createNewEpic(createTestEpic());
+        taskManager.createNewSubtask(createTestSubtask1());
         assertEquals(expectedNumber,taskManager.getTasksQuantity());
     }
 
     @Test
     void shouldReturn4ForTaskManagerGetAllTasksName(){
         int expectedNumber = 4;
-        taskManager.createNewTask(TEXT,TEXT);
-        epic = (Epic) taskManager.createNewEpic(TEXT,TEXT);
-        taskManager.createNewSubtask(TEXT, TEXT, epic);
-        taskManager.createNewSubtask(TEXT, TEXT, epic);
+        taskManager.createNewTask(createTestTask());
+        taskManager.createNewEpic(createTestEpic());
+        taskManager.createNewSubtask(createTestSubtask1());
+        taskManager.createNewSubtask(createTestSubtask2());
         assertEquals(expectedNumber,taskManager.getTasksQuantity());
     }
 
     @Test
     void shouldReturn0ForTaskManagerDelleteAll(){
         int expectedNumber = 0;
-        taskManager.createNewTask(TEXT,TEXT);
-        epic = (Epic) taskManager.createNewEpic(TEXT,TEXT);
-        taskManager.createNewSubtask(TEXT, TEXT, epic);
+        taskManager.createNewTask(createTestTask());
+        taskManager.createNewEpic(createTestEpic());
+        taskManager.createNewSubtask(createTestSubtask1());
         taskManager.deleteAll();
         assertEquals(expectedNumber,taskManager.getTasksQuantity());
     }
@@ -67,7 +66,7 @@ abstract class TaskManagerTest{
     @Test
     void shouldReturnTrueForTaskManagerCreateNewTask(){
         int expectedNumberTasks = 1;
-        task = taskManager.createNewTask(TEXT, TEXT);
+        taskManager.createNewTask(createTestTask());
         assertTrue(taskManager.getTasksQuantity() == expectedNumberTasks &&
                 (taskManager.getTaskMap()).get(task.getId()).getTypeTask().equals(TypeTask.TASK));
     }
@@ -75,14 +74,14 @@ abstract class TaskManagerTest{
     @Test
     void shouldReturnTrueForTaskManagerCreateNewEpic(){
         int expectedNumberEpic = 1;
-        epic = (Epic) taskManager.createNewEpic(TEXT, TEXT);
+        taskManager.createNewEpic(createTestEpic());
         assertTrue(taskManager.getTasksQuantity() == expectedNumberEpic &&
                 (taskManager.getTaskMap()).get(epic.getId()).getTypeTask().equals(TypeTask.EPIC));
     }
 
     @Test
     void shouldReturnTrueForTaskManagerCreateNewSubtaskAndEpic(){
-        createNewEpicAndTwoNewSubtasks();
+        createNewEpicAndTwoNewSubtasksInManeger();
         boolean condition1 = taskManager.getTasksQuantity() == 3;
         boolean condition2 = epic.getSubTaskListId().size() == 2;
         boolean condition3 = true;
@@ -96,7 +95,7 @@ abstract class TaskManagerTest{
     @Test
     void shouldReturnTrueForEpicStatusCreateNewEpicSTATUS_NEW(){
         Status expected = Status.NEW;
-        createNewEpicAndTwoNewSubtasks();
+        createNewEpicAndTwoNewSubtasksInManeger();
         assertTrue(epic.getStatus() == expected && subTask1.getStatus() == expected &&
                 subTask2.getStatus() == expected);
     }
@@ -104,49 +103,60 @@ abstract class TaskManagerTest{
     @Test
     void shouldReturnTrueForEpicStatusCreateNewEpicSTATUS_IN_PROGRESS(){
         Status expected = Status.IN_PROGRESS;
-        createNewEpicAndTwoNewSubtasks();
-        taskManager.updateTask(subTask1,TEXT, TEXT, Status.IN_PROGRESS);
+        createNewEpicAndTwoNewSubtasksInManeger();
+
+        SubTask updatedSubtask = new SubTask(subTask1.getName(), subTask1.getDescription(),
+                subTask1.getStartTime().format(dateTimeFormatter),
+                subTask1.getDuration().toMinutes(), epic);
+        updatedSubtask.setStatus(Status.IN_PROGRESS);
+        taskManager.updateTask(subTask1,updatedSubtask);
         assertTrue(epic.getStatus() == expected && subTask1.getStatus() == expected);
     }
 
     @Test
     void shouldReturnTrueForEpicStatusCreateNewEpicSTATUS_DONE(){
         Status expected = Status.DONE;
-        createNewEpicAndTwoNewSubtasks();
-        taskManager.updateTask(subTask1,TEXT, TEXT, Status.DONE);
-        taskManager.updateTask(subTask2,TEXT, TEXT, Status.DONE);
+        createNewEpicAndTwoNewSubtasksInManeger();
+        SubTask updatedSubtask1 = new SubTask(subTask1.getName(), subTask1.getDescription(),
+                subTask1.getStartTime().format(dateTimeFormatter),
+                subTask1.getDuration().toMinutes(), epic);
+        updatedSubtask1.setStatus(Status.DONE);
+        SubTask updatedSubtask2 = new SubTask(subTask1.getName(), subTask1.getDescription(),
+                subTask1.getStartTime().format(dateTimeFormatter),
+                subTask1.getDuration().toMinutes(), epic);
+        updatedSubtask2.setStatus(Status.DONE);
+        taskManager.updateTask(subTask1, updatedSubtask1);
+        taskManager.updateTask(subTask2, updatedSubtask1);
         assertTrue(epic.getStatus() == expected && subTask1.getStatus() == expected &&
                 subTask2.getStatus() == expected);
     }
 
     @Test
     void shouldReturnFalseForUpdateTaskForTask(){
-        task = taskManager.createNewTask(TEXT, TEXT);
-        Task tempTask =  new Task(task.getId(), task.getName(), task.getDescription());
-        taskManager.updateTask(task, TEXT, TEXT, Status.IN_PROGRESS);
-        assertFalse(compareTasks(task,tempTask));
+        taskManager.createNewTask(createTestTask());
+        Status taskStatus = task.getStatus();
+        Task updatedTask =  new Task(task.getName(), task.getDescription(),
+                task.getStartTime().format(dateTimeFormatter), task.getDuration().toMinutes());
+        updatedTask.setStatus(Status.IN_PROGRESS);
+        taskManager.updateTask(task, updatedTask);
+        assertFalse(taskStatus == task.getStatus());
     }
 
     @Test
     void shouldReturnFalseForUpdateTaskEpic(){
-        epic = (Epic)taskManager.createNewEpic(TEXT,TEXT);
-        Task tempEpic =  new Epic(epic.getId(), epic.getName(), epic.getDescription());
-        taskManager.updateTask(epic, TEXT, TEXT, Status.IN_PROGRESS);
-        assertFalse(compareTasks(epic,tempEpic));
+        createNewEpicAndTwoNewSubtasksInManeger();
+        Status epicOldStatus = epic.getStatus();
+        SubTask updatedSubtask1 = new SubTask(subTask1.getName(), subTask1.getDescription(),
+                subTask1.getStartTime().format(dateTimeFormatter), subTask1.getDuration().toMinutes(), epic);
+        updatedSubtask1.setStatus(Status.IN_PROGRESS);
+        taskManager.updateTask(subTask1, updatedSubtask1);
+        assertFalse(epic.getStatus() == epicOldStatus);   //меняется статус с нью на инпрогресс
     }
 
-    @Test
-    void shouldReturnFalseForUpdateTaskSubtask(){
-        epic = (Epic)taskManager.createNewEpic(TEXT,TEXT);
-        subTask1 = (SubTask) taskManager.createNewSubtask(TEXT, TEXT, epic);
-        Task tempSubtask =  new SubTask(subTask1.getId(), subTask1.getName(), subTask1.getDescription());
-        taskManager.updateTask(subTask1, TEXT, TEXT, Status.IN_PROGRESS);
-        assertFalse(compareTasks(subTask1,tempSubtask));
-    }
 
     @Test
     void shouldReturnNullForDeleteWithId(){
-        createNewEpicAndTwoNewSubtasks();
+        createNewEpicAndTwoNewSubtasksInManeger();
         int idSubtask = subTask1.getId();
         taskManager.deleteWithId(idSubtask);
         assertNull(taskManager.getTaskMap().get(idSubtask));
@@ -154,11 +164,37 @@ abstract class TaskManagerTest{
 
     @Test
     abstract void shouldReturnTrueForGetTask();
+    //DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
-    void createNewEpicAndTwoNewSubtasks(){
-        epic = (Epic) taskManager.createNewEpic(TEXT, TEXT);
-        subTask1 = (SubTask) taskManager.createNewSubtask(TEXT, TEXT, epic);
-        subTask2 = (SubTask) taskManager.createNewSubtask(TEXT, TEXT, epic);
+    void createNewEpicAndTwoNewSubtasksInManeger(){
+        taskManager.createNewEpic(createTestEpic());
+        taskManager.createNewSubtask(createTestSubtask1());
+        taskManager.createNewSubtask(createTestSubtask2());
+    }
+
+    public Task createTestTask(){
+        String startTime = "12:20 30-08-2022";
+        long duration = 60;
+        task = new Task(NAME_TASK, DESCRIPTION_TASK, startTime,duration);
+        return task;
+    }
+
+    public SubTask createTestSubtask1(){
+        String startTime = "12:20 24-08-2022";
+        long duration = 300;
+        subTask1 = new SubTask(NAME_TASK, DESCRIPTION_TASK,startTime,duration, epic);
+        return subTask1;
+    }
+    public SubTask createTestSubtask2(){
+        String startTime = "17:45 24-08-2022";
+        long duration = 400;
+        subTask2 = new SubTask(NAME_TASK, DESCRIPTION_TASK,startTime,duration, epic);
+        return subTask2;
+    }
+
+    public Epic createTestEpic(){
+        epic = new Epic(NAME_TASK, DESCRIPTION_TASK);
+        return epic;
     }
 
     <T extends Task> boolean compareTasks(T task1, T task2){
@@ -170,36 +206,3 @@ abstract class TaskManagerTest{
     }
 }
 
-/*
-
-Для двух менеджеров задач InMemoryTasksManager и FileBackedTasksManager.
-Чтобы избежать дублирования кода, необходим базовый класс с тестами на каждый
-метод из интерфейса abstract class manager.impl.TaskManagerTest<T extends TaskManager>.
--Для подзадач нужно дополнительно проверить наличие эпика, а для эпика — расчёт статуса.
--Для каждого метода нужно проверить его работу:
-a. Со стандартным поведением.
-b. С пустым списком задач.
-c. С неверным идентификатором задачи (пустой и/или несуществующий идентификатор).
-
-public interface TaskManager {
-
-    void getAllTasksName(); +/-
-
-    void deleteAll();   +
-
-    Task createNewTask(String name, String description);    +
-
-    Task createNewSubtask(String name, String description, Epic epic);
-
-    Task createNewEpic(String name, String description);    +
-
-    void getTask(Integer id);
-
-    void updateTask(Task abstractTask, String name, String description, Status status); +
-
-    void deleteWithId(int id);+
-
-    void allSubtaskFromEpic(Epic epic);
-
-    Integer returnTasksQuantity(); +
-}*/
