@@ -1,22 +1,25 @@
 package taskclass;
 
-import enumclass.Status;
 import enumclass.TypeTask;
 import manager.interfaces.TaskManager;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Epic extends Task {
 
     private List<Integer> subTaskListId;
+    private static final LocalDateTime plugTime = LocalDateTime.of(1970,
+            Month.JANUARY,1,0,0);
+    private static final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
+    //не могу убрать dateTimeFormatter из-за того, что не использовать его из Task при передачи в super()
 
     public Epic(String name, String description) {
-        super(name, description, "00:00 01-01-1970", 0);
+        super(name, description, plugTime.format(dateTimeFormatter), 0);
         subTaskListId = new ArrayList<>();
     }
 
@@ -73,10 +76,6 @@ public class Epic extends Task {
 
     public List<Integer> getSubTaskListId() {
         return subTaskListId;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public void removeSubtaskId(Integer id) {

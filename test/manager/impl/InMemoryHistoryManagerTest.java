@@ -15,19 +15,15 @@ import static org.junit.jupiter.api.Assertions.*;
 class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
 
     private static Task task;
-    private static final int TASK_ID = 1;
     private static Epic epic;
-    private static final int EPIC_ID = 2;
     private static SubTask subTask1;
-    private static final int SUBTASK1_ID = 3;
     private static SubTask subTask2;
-    private static final int SUBTASK2_ID = 4;
     protected static final String NAME_TASK = "anyName";
     protected static final String DESCRIPTION_TASK = "anyDescription";
     protected InMemoryTaskManager taskManager;                  // При работе с эпиками подзадачи обращаются к
                                                                 //  EpicId. Без него уже не получится.
     private static InMemoryHistoryManager historyManager;
-    private static String TEXT = "SomeText";
+    private static final String TEXT = "SomeText";
     protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     @BeforeEach
@@ -38,7 +34,7 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
 
     @Test
     void shouldReturnTrueForHistoryManagerEmpty(){
-        assertTrue(historyManager.getHistory().size() == 0);
+        assertEquals(0,historyManager.getHistory().size());
     }
 
     @Test
@@ -62,8 +58,8 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
         List<Task> taskList= historyManager.getHistory();
         boolean condition1 = taskList.size() == 4;
         boolean condition2 = taskList.get(0).getTypeTask() == TypeTask.EPIC;
-        boolean condition3 = taskList.get(1).getTypeTask() == TypeTask.SUB_TASK;
-        boolean condition4 = taskList.get(2).getTypeTask() == TypeTask.SUB_TASK;
+        boolean condition3 = taskList.get(1).getTypeTask() == TypeTask.SUBTASK;
+        boolean condition4 = taskList.get(2).getTypeTask() == TypeTask.SUBTASK;
         boolean condition5 = taskList.get(3).getTypeTask() == TypeTask.TASK;
         assertTrue(condition1 && condition2 && condition3 && condition4 && condition5);
     }
@@ -78,7 +74,7 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
         historyManager.add(epic);
         historyManager.remove(epic.getId());
         List<Task> taskList = historyManager.getHistory();
-        assertTrue(taskList.get(0).getTypeTask() == TypeTask.TASK);
+        assertSame(TypeTask.TASK, taskList.get(0).getTypeTask());
     }
 
     @Test
@@ -91,7 +87,7 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
         historyManager.add(epic);
         historyManager.remove(task.getId());
         List<Task> taskList = historyManager.getHistory();
-        assertTrue(taskList.get(2).getTypeTask() == TypeTask.SUB_TASK);
+        assertSame(TypeTask.SUBTASK, taskList.get(2).getTypeTask());
     }
 
     @Test
@@ -105,7 +101,7 @@ class InMemoryHistoryManagerTest extends InMemoryHistoryManager {
         historyManager.remove(subTask2.getId());
         List<Task> taskList = historyManager.getHistory();
         assertTrue(taskList.get(0).getTypeTask() == TypeTask.EPIC &&
-                taskList.get(1).getTypeTask() == TypeTask.SUB_TASK &&
+                taskList.get(1).getTypeTask() == TypeTask.SUBTASK &&
                 taskList.get(2).getTypeTask() == TypeTask.TASK);
 
 

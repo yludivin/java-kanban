@@ -1,13 +1,11 @@
 package taskclass;
 
-import enumclass.Status;
 import enumclass.TypeTask;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import java.util.Objects;
 
 public class SubTask extends Task {
-    private int epicId;
+    private Integer epicId;
 
     public SubTask(String name, String description,String startTime, long duration, Epic epic) {
         super(name, description,startTime,duration);
@@ -24,31 +22,39 @@ public class SubTask extends Task {
 
     @Override
     public TypeTask getTypeTask() {
-        return TypeTask.SUB_TASK;
+        return TypeTask.SUBTASK;
     }
 
     @Override
     public String toString() {
-        String plug = "Время не установлено";
-        String startWork = (getStartTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getStartTime());
-        String endWork = (getEndTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getEndTime());
-        String duration = (getDuration() == Duration.ZERO) ? plug : getDuration().toMinutes() + "";
         return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n"
-                + "Начало работы:\t" + startWork + "\n"
-                + "Продолжительность(мин):\t" + duration + "\n"
-                + "Завершение:\t" + endWork + "\n";
+                + "Начало работы:\t" + dateTimeFormatter.format(getStartTime()) + "\n"
+                + "Продолжительность(мин):\t" + getDuration().toMinutes() + "\n"
+                + "Завершение:\t" + dateTimeFormatter.format(getEndTime()) + "\n";
     }
 
     @Override
     public boolean equals(Object o) {
-        return super.equals(o);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        SubTask anotherTask = (SubTask) o;
+
+        return id.equals(anotherTask.getId()) &&
+                name.equals(anotherTask.getName()) &&
+                description.equals(anotherTask.getDescription()) &&
+                status == anotherTask.getStatus() &&
+                startTime.isEqual(anotherTask.getStartTime()) &&
+                endTime.isEqual(anotherTask.getEndTime()) &&
+                duration.equals(anotherTask.getDuration()) &&
+                epicId.equals(anotherTask.getEpicId());
     }
 
     @Override
     public int hashCode() {
-        return super.hashCode();
+        return 31 * Objects.hash(id, name, description, status, startTime, endTime, duration, epicId);
     }
 
     @Override

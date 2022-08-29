@@ -22,7 +22,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasksMap = new HashMap<>();
         this.taskId = 0;
         this.inMemoryHistoryManager = Managers.getDefaultHistory();
-        prioritizedTasks = new TreeSet<>(timeComporator);
+        this.prioritizedTasks = new TreeSet<>(timeComporator);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    protected void validateTask(Task task) {
+    protected void validateTask() {
         LocalDateTime endTimePrevTask = LocalDateTime.MIN;
         for (Task prioritizedTask : prioritizedTasks) {
             if (prioritizedTask.getStartTime().isBefore(endTimePrevTask)) {
@@ -77,7 +77,7 @@ public class InMemoryTaskManager implements TaskManager {
         task.setId(id);
         tasksMap.put(taskId, task);
         addTaskToPriortizedSet(task);
-        validateTask(task);
+        validateTask();
         return task;
     }
 
@@ -91,7 +91,7 @@ public class InMemoryTaskManager implements TaskManager {
         refreshEpicLastTime((tasksMap.get(subTask.getEpicId())).getId());
         refreshEpicStartTime((tasksMap.get(subTask.getEpicId())).getId());
         refreshEpicDuration((tasksMap.get(subTask.getEpicId())).getId());
-        validateTask(subTask);
+        validateTask();
         return subTask;
     }
 
@@ -107,7 +107,6 @@ public class InMemoryTaskManager implements TaskManager {
     public void getTask(Integer id) {
         taskclass.Task tempTask = tasksMap.get(id);
         if (tempTask != null) {
-            //System.out.println(tasksMap.get(id));
             inMemoryHistoryManager.add(tasksMap.get(id));
         } else {
             System.out.println("Такой задачи нет\n");
@@ -125,13 +124,13 @@ public class InMemoryTaskManager implements TaskManager {
                 oldTask.setDuration((int) newTask.getDuration().toMinutes());
                 oldTask.calculateEndTime();
                 refreshPrioritizedTasks();
-                validateTask(oldTask);
+                validateTask();
                 break;
             case EPIC:
                 oldTask.setName(newTask.getName());
                 oldTask.setDescription(newTask.getDescription());
                 break;
-            case SUB_TASK:
+            case SUBTASK:
                 oldTask.setName(newTask.getName());
                 oldTask.setDescription(newTask.getDescription());
                 oldTask.setStatus(newTask.getStatus());
@@ -139,7 +138,7 @@ public class InMemoryTaskManager implements TaskManager {
                 oldTask.setDuration((int) newTask.getDuration().toMinutes());
                 oldTask.calculateEndTime();
                 refreshPrioritizedTasks();
-                validateTask(oldTask);
+                validateTask();
                 int epicId = ((SubTask) oldTask).getEpicId();
                 refreshEpicStatus(epicId);
                 refreshEpicLastTime(epicId);
@@ -160,7 +159,7 @@ public class InMemoryTaskManager implements TaskManager {
                         tasksMap.remove(idSubTask);
                     }
                     break;
-                case SUB_TASK:
+                case SUBTASK:
                     int epicId = ((SubTask) tasksMap.get(id)).getEpicId();
                     ((Epic) tasksMap.get(epicId)).removeSubtaskId(id);   //удаляем в списке подзадач Epic подзадачу
                     int subtaskId = tasksMap.get(id).getId();

@@ -5,17 +5,16 @@ import enumclass.TypeTask;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public class Task {
     protected Integer id;
     protected String name;
     protected String description;
     protected Status status;
-    protected LocalDateTime plugTime = LocalDateTime.of(1970, Month.JANUARY,1,0,0);
     protected LocalDateTime startTime;
-    protected LocalDateTime endTime;
+    protected LocalDateTime endTime;    //Иван, время конца не могу перенести в эпик. Оно же используется во всех 3 классах
     protected Duration duration;
     protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
@@ -96,30 +95,30 @@ public class Task {
 
     @Override
     public String toString() {
-        String plug = "Время не установлено";
-        String startWork = (getStartTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getStartTime());
-        String endWork = (getEndTime() == LocalDateTime.MIN) ? plug : dateTimeFormatter.format(getEndTime());
-        String duration = (getDuration() == Duration.ZERO) ? plug : getDuration().toMinutes() + "";
         return "ID: " + getId() + " " + getTypeTask().getName() + ":" + "\t" + getName() + "\n"
                 + "Описание:\t" + getDescription() + "\n"
                 + "Статус:\t" + getStatus() + "\n"
-                + "Начало работы:\t" + startWork + "\n"
-                + "Продолжительность(мин):\t" + duration + "\n"
-                + "Завершение:\t" + endWork + "\n";
+                + "Начало работы:\t" + dateTimeFormatter.format(getStartTime()) + "\n"
+                + "Продолжительность(мин):\t" + getDuration().toMinutes() + "\n"
+                + "Завершение:\t" + dateTimeFormatter.format(getEndTime()) + "\n";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
-        Task task = (Task) o;
-
-        return id == task.id;
+        Task anotherTask = (Task) o;
+        return id.equals(anotherTask.getId()) &&
+                name.equals(anotherTask.getName()) &&
+                description.equals(anotherTask.getDescription()) &&
+                status == anotherTask.getStatus() &&
+                startTime.isEqual(anotherTask.getStartTime()) &&
+                endTime.isEqual(anotherTask.getEndTime()) &&
+                duration.equals(anotherTask.getDuration());
     }
 
     @Override
     public int hashCode() {
-        return id;
+        return 31 * Objects.hash(id, name, description, status, startTime, endTime, duration);
     }
 }

@@ -3,12 +3,8 @@ package taskclass;
 import enumclass.Status;
 import manager.impl.InMemoryTaskManager;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import taskclass.Epic;
-import taskclass.SubTask;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -20,12 +16,13 @@ class EpicTest {
     private Epic epicForTest;
     private SubTask subTask1;
     private SubTask subTask2;
-    private DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     private static final String NAME_TASK = "anyTask";
     private static final String DESCRIPTION_TASK = "anyTask";
 
-    public EpicTest() {
+    @BeforeEach
+    void init() {
         this.inMemoryTaskManager = new InMemoryTaskManager();
         Epic epic = new Epic(NAME_TASK, DESCRIPTION_TASK);
         this.epicForTest = (Epic) inMemoryTaskManager.createNewEpic(epic);

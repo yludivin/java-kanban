@@ -2,14 +2,15 @@ package enumclass;
 
 public enum TypeTask {
     TASK("Задача"),
-    SUB_TASK("Подзадача"),
+    SUBTASK("Подзадача"),
     EPIC("Эпик");
 
-    private String name;
+    private final String name;
 
     TypeTask(String name) {
         this.name = name;
     }
+
     public String getName(){
         return name;
     }
