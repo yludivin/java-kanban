@@ -130,8 +130,8 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
         expectedLines = new ArrayList<>();
         expectedLines.add("1,TASK,anyName,NEW,anyDescription,12:20 30-08-2022,PT1H,13:20 30-08-2022");
         expectedLines.add("2,EPIC,anyName,NEW,anyDescription,12:20 24-08-2022,PT12H5M,00:25 25-08-2022,sub tasks - [3, 4]");
-        expectedLines.add("3,SUB_TASK,anyName,NEW,anyDescription,12:20 24-08-2022,PT5H,17:20 24-08-2022,2");
-        expectedLines.add("4,SUB_TASK,anyName,NEW,anyDescription,17:45 24-08-2022,PT6H40M,00:25 25-08-2022,2");
+        expectedLines.add("3,SUBTASK,anyName,NEW,anyDescription,12:20 24-08-2022,PT5H,17:20 24-08-2022,2");
+        expectedLines.add("4,SUBTASK,anyName,NEW,anyDescription,17:45 24-08-2022,PT6H40M,00:25 25-08-2022,2");
     }
 
 /*    public Task createTestTask(){
