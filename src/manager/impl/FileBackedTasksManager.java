@@ -8,6 +8,7 @@ import taskclass.SubTask;
 import taskclass.Task;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -16,12 +17,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final Path path;
+    private Path path;
+    private URI uri;
     protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     public FileBackedTasksManager(Path path) {
         super();
         this.path = path;
+    }
+    public FileBackedTasksManager(URI uri) {
+        this.uri = uri;
     }
 
     @Override
@@ -60,12 +65,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void getTask(Integer id) {
-        super.getTask(id);
+    public void getTaskById(Integer id) {
+        super.getTaskById(id);
         save();
     }
 
-    private void save() {
+    protected void save() {
         if (!Files.exists(path)) {
             try {
                 Files.createFile(path);

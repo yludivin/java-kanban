@@ -1,15 +1,13 @@
-import manager.Managers;
-import manager.impl.FileBackedTasksManager;
-import taskclass.Epic;
-import taskclass.SubTask;
+import api.HttpTaskServer;
+import api.KVServer;
+import api.KVTaskClient;
 import manager.impl.InMemoryTaskManager;
 import manager.interfaces.TaskManager;
 import taskclass.Task;
 
-import java.nio.file.Path;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.Month;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,8 +66,8 @@ public class Main {
         deleteTask(taskManager,2);
         System.out.println("Шестой вывод истории \n _______________________________________");
         getHistory(taskManager);*/
-
-        TaskManager taskManager = new InMemoryTaskManager();
+        //Проверка 7 финалки
+        /*TaskManager taskManager = new InMemoryTaskManager();
 
         Task task1 = taskManager.createNewTask(
                 new Task("Вынести мусор к машине", "Машина приезжает с 6 до 7",
@@ -143,21 +141,38 @@ public class Main {
         Epic epicf7 = (Epic) fbtm1.createNewEpic(
                 new Epic("Формирование списка мебели", "брать Питерские фирмы"));
 
-        fbtm1.getTask(2);
-        fbtm1.getTask(4);
-        fbtm1.getTask(7);
-        fbtm1.getTask(4);
-        fbtm1.getTask(2);
-        fbtm1.getTask(1);
-        fbtm1.getTask(2);
+        fbtm1.getTaskById(2);
+        fbtm1.getTaskById(4);
+        fbtm1.getTaskById(7);
+        fbtm1.getTaskById(4);
+        fbtm1.getTaskById(2);
+        fbtm1.getTaskById(1);
+        fbtm1.getTaskById(2);
 
         FileBackedTasksManager fbtm2 = new FileBackedTasksManager(
                 Path.of("D:\\yp\\java-kanban\\src\\data\\saveData2.txt"));
 
 
         fbtm2.loadFromFile(Path.of("D:\\yp\\java-kanban\\src\\data\\saveData1.txt"));
-        fbtm2.getTask(6);
-        fbtm2.getTask(1);
+        fbtm2.getTaskById(6);
+        fbtm2.getTaskById(1);*/
+
+        try {
+            KVServer kvServer = new KVServer();
+            kvServer.start();
+            URL url = new URL("http://localhost:8078");
+            KVTaskClient kvTaskClient = new KVTaskClient(url);
+            kvTaskClient.put("Some Key", "Some Value");
+            String kvTaskClientLoad = kvTaskClient.load("Some Key");
+            System.out.println(kvTaskClientLoad);
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 

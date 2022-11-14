@@ -12,8 +12,6 @@ import taskclass.Task;
 
 import java.io.*;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +34,7 @@ class FileBackedTasksManagerTest extends InMemoryTaskManagerTest {
 
     @BeforeEach
     void clearTaskmanagerAndFile() {
-        taskManager.deleteAll();
+        taskManager.deleteAllTasks();
     }
 
     @Test

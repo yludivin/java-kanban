@@ -30,7 +30,7 @@ abstract class TaskManagerTest{
 
     @BeforeEach
     void cleanTasks(){
-        taskManager.deleteAll();
+        taskManager.deleteAllTasks();
     }
 
     @Test
@@ -59,7 +59,7 @@ abstract class TaskManagerTest{
         taskManager.createNewTask(createTestTask());
         taskManager.createNewEpic(createTestEpic());
         taskManager.createNewSubtask(createTestSubtask1());
-        taskManager.deleteAll();
+        taskManager.deleteAllTasks();
         assertEquals(expectedNumber,taskManager.getTasksQuantity());
     }
 
@@ -158,7 +158,7 @@ abstract class TaskManagerTest{
     void shouldReturnNullForDeleteWithId(){
         createNewEpicAndTwoNewSubtasksInManeger();
         int idSubtask = subTask1.getId();
-        taskManager.deleteWithId(idSubtask);
+        taskManager.deleteTaskById(idSubtask);
         assertNull(taskManager.getTaskMap().get(idSubtask));
     }
 

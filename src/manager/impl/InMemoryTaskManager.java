@@ -59,14 +59,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void getAllTasksName() {
+    public void getTasks() {
         for (Map.Entry<Integer, taskclass.Task> task : tasksMap.entrySet()) {
             System.out.println(task.toString());
         }
     }
 
     @Override
-    public void deleteAll() {
+    public void deleteAllTasks() {
         tasksMap.clear();
         refreshPrioritizedTasks();
     }
@@ -104,7 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void getTask(Integer id) {
+    public void getTaskById(Integer id) {
         taskclass.Task tempTask = tasksMap.get(id);
         if (tempTask != null) {
             inMemoryHistoryManager.add(tasksMap.get(id));
@@ -149,7 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteWithId(int id) {
+    public void deleteTaskById(int id) {
         if (tasksMap.get(id) != null) {
             switch ((tasksMap.get(id)).getTypeTask()) {
                 case EPIC:

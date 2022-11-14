@@ -20,9 +20,9 @@ public class InMemoryTaskManagerTest extends TaskManagerTest {
         int idSubtask1 = subTask1.getId();
         int idSubtask2 = subTask2.getId();
 
-        taskManager.getTask(idSubtask1);
-        taskManager.getTask(idEpic);
-        taskManager.getTask(idSubtask2);
+        taskManager.getTaskById(idSubtask1);
+        taskManager.getTaskById(idEpic);
+        taskManager.getTaskById(idSubtask2);
 
         List<Task> idSequence = List.of(subTask1, epic, subTask2);
         List<Task> history = ((InMemoryTaskManager)taskManager).getInMemoryHistoryManager().getHistory();
