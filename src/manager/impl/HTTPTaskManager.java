@@ -1,4 +1,4 @@
-package manager.impl.data;
+package manager.impl;
 
 import api.KVTaskClient;
 import com.google.gson.Gson;
@@ -26,9 +26,17 @@ public class HTTPTaskManager extends FileBackedTasksManager {
     }
 
     @Override
-    protected void save() {
-        kvTaskClient.put("Task", gson.toJson(getTaskMap()));
-        kvTaskClient.put("Epic", gson.toJson(get));
+    protected void save()  {
+        try {
+            kvTaskClient.put("Task", gson.toJson(getTaskMap()));
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

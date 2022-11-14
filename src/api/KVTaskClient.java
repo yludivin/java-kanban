@@ -1,5 +1,8 @@
 package api;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,12 +14,16 @@ import java.net.http.HttpResponse;
 public class KVTaskClient {
     private HttpClient client;
     private URL url;
-
     private String apiToken;
+
 
     public KVTaskClient(URL url) throws URISyntaxException, IOException, InterruptedException {
         client = HttpClient.newBuilder().build();
         this.url = url;
+        register();
+    }
+
+    private void register() throws URISyntaxException, IOException, InterruptedException {
         URI uri = new URI(url.toString() + "/register");
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(uri)
@@ -24,7 +31,6 @@ public class KVTaskClient {
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         apiToken = response.body();
-
     }
 
 
@@ -35,7 +41,10 @@ public class KVTaskClient {
                 .uri(uri)
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .build();
-        client.send(request, HttpResponse.BodyHandlers.ofString());
+        HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if(response.statusCode() != 200){
+            throw new RuntimeException("Ошибка при отправке запроса");
+        }
 
     }
 
@@ -47,6 +56,9 @@ public class KVTaskClient {
                 .GET()
                 .build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        if(response.statusCode() != 200){
+            throw new RuntimeException("Ошибка при получении ответа");
+        }
         return response.body();
     }
 

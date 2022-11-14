@@ -1,10 +1,6 @@
 
 9
 	README.md,8/e/8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
-Z
-*src/manager/interfaces/HistoryManager.java,9\0\90a7495789d5db2d5e492d9b3937e0de01aff6ee
-\
-,src/manager/impl/InMemoryHistoryManager.java,2\2\22885da9839362a2fd4ae5f01ef57770d05a6afc
 I
 src/enumclass/Status.java,9\c\9c261bf7fa06cab8be4448ae2090942caf7991fa
 J
@@ -21,3 +17,31 @@ W
 'src/exeptions/ManagerSaveException.java,3\5\35a7327087e2bf89cc5da6c5d9d0701f6326c32b
 L
 test/taskclass/EpicTest.java,0\b\0ba75df2b5d132ab55fd750c62101fc241829cd3
+w
+G.idea/sonarlint/issuestore/9/c/9c261bf7fa06cab8be4448ae2090942caf7991fa,d\3\d3ebd9dc4f171526a06183e6d51cba0b1c4f995e
+?
+java-kanban.iml,d\f\df5dcbbd3f931c7c23855ccec11732ab4c8544f2
+R
+"src/dataTest/testDataForLoadToFile,e\5\e5bf510aae2dc3db8e786b10fd44bef81e0cd476
+w
+G.idea/sonarlint/issuestore/9/3/9382ff5d9d03cdb73e3d2bc9d4eb0ee3c1451dbf,1\e\1ec851392ec1b245392b6950806bc33c98b787c9
+w
+G.idea/sonarlint/issuestore/b/3/b35a869c805e32105237c1175b35f8ea165c2cd6,3\d\3d571de7720d863cbc8f44f810f7ff8a66b2345c
+T
+$.idea/libraries/google_code_gson.xml,3\3\33f3084b5a929572b9bb33e8c3174e8278ec1215
+w
+G.idea/sonarlint/issuestore/3/5/35a7327087e2bf89cc5da6c5d9d0701f6326c32b,4\4\441cc3b9e20e73a53698be9193719081ad787f24
+S
+#src/manager/impl/data/saveData1.txt,8\e\8e470da7c3c9508cd1bc52967bd7473d5e0c4d4d
+w
+G.idea/sonarlint/issuestore/1/5/151d79bdc217b1c17e775f19f1473b982067c7bb,d\2\d2cd0a21c700fb33b07a9cc608a9e087afc10232
+S
+#src/manager/impl/data/saveData2.txt,c\2\c2c6c04d0375ce12cbb3db08dc948a7dd4682c5d
+w
+G.idea/sonarlint/issuestore/a/1/a1e596c5bc6c738f2b7a6942eaa1772ae133ccc7,d\9\d94ff8d9ed4ad033744593bbb2148c9f486ce32d
+a
+1test/manager/impl/FileBackedTasksManagerTest.java,4\f\4f399a6d1f21092297cf1aaaa99f55de22ce68fe
+^
+.test/manager/impl/InMemoryTaskManagerTest.java,b\7\b72641206d9c52f2cc48f005c4638e890b88fc12
+V
+&test/manager/impl/TaskManagerTest.java,8\b\8b81a8c176f0e6d480d256e89e62a219acd3b418

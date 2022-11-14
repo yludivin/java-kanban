@@ -74,8 +74,8 @@ public class KVServer {
                 return;
             }
             if ("POST".equals(h.getRequestMethod())) {
-                String tes = h.getRequestURI().getPath();
-                String key = h.getRequestURI().getPath().substring("/save/".length());       //убрал /после save
+
+                String key = h.getRequestURI().getPath().substring("/save/".length());
                 if (key.isEmpty()) {
                     System.out.println("Key для сохранения пустой. key указывается в пути: /save/{key}");
                     h.sendResponseHeaders(400, 0);

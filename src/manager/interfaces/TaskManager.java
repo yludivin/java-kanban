@@ -22,12 +22,6 @@ public interface TaskManager {
     Task createNewSubtask(SubTask subTask);
 
     Task createNewEpic(Epic epic);
-    //new под вопросом
-    Map<Integer, Task> getTasksMap();
-
-    Map<Integer, Epic> getEpicsMap();
-
-    Map<Integer, SubTask> getSubTasksMap();
 
 
     void allSubtaskFromEpic(Epic epic);
@@ -37,4 +31,6 @@ public interface TaskManager {
     Map<Integer, Task> getTaskMap();
 
     TreeSet<Task> getPrioritizedTasks();
+
+    public HistoryManager getInMemoryHistoryManager();
 }

@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
-    protected Map<Integer, taskclass.Task> tasksMap;
+    protected Map<Integer, Task> tasksMap;
+    protected Map<Integer, taskclass.Task> EpicsMap;
+    protected Map<Integer, taskclass.Task> SubTasksMap;
     protected Integer taskId;
     protected HistoryManager inMemoryHistoryManager;
     protected TreeSet<Task> prioritizedTasks;
@@ -64,6 +66,7 @@ public class InMemoryTaskManager implements TaskManager {
             System.out.println(task.toString());
         }
     }
+
 
     @Override
     public void deleteAllTasks() {
