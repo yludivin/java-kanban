@@ -14,8 +14,7 @@ import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
     protected Map<Integer, Task> tasksMap;
-    protected Map<Integer, taskclass.Task> EpicsMap;
-    protected Map<Integer, taskclass.Task> SubTasksMap;
+
     protected Integer taskId;
     protected HistoryManager inMemoryHistoryManager;
     protected TreeSet<Task> prioritizedTasks;
@@ -74,6 +73,65 @@ public class InMemoryTaskManager implements TaskManager {
         refreshPrioritizedTasks();
     }
 
+    public void deleteOnlyTasks(){
+        for(Map.Entry<Integer, Task> taskEntry : tasksMap.entrySet()){
+            if(taskEntry.getValue().getTypeTask() == TypeTask.TASK){
+                deleteTaskById(taskEntry.getKey());
+            }
+        }
+    }
+
+    public void deleteOnlyEpics(){
+        for(Map.Entry<Integer, Task> taskEntry : tasksMap.entrySet()){
+            if(taskEntry.getValue().getTypeTask() == TypeTask.EPIC){
+                deleteTaskById(taskEntry.getKey());
+            }
+        }
+    }
+
+    @Override
+    public void deleteOnlySubtasks(){
+        for(Map.Entry<Integer, Task> taskEntry : tasksMap.entrySet()){
+            if(taskEntry.getValue().getTypeTask() == TypeTask.SUBTASK){
+                deleteTaskById(taskEntry.getKey());
+            }
+        }
+    }
+
+
+
+    public List<Task> getOnlyTasks(){
+        List tasksList = new ArrayList<>();
+        for(Map.Entry<Integer, Task> taskEntry : tasksMap.entrySet()){
+            if(taskEntry.getValue().getTypeTask() == TypeTask.TASK){
+                tasksList.add(taskEntry.getValue());
+            }
+        }
+        return tasksList;
+    }
+
+    @Override
+    public List<Epic> getOnlyEpics() {
+        List epicList = new ArrayList<>();
+        for(Map.Entry<Integer, Task> epicEntry : tasksMap.entrySet()){
+            if(epicEntry.getValue().getTypeTask() == TypeTask.EPIC){
+                epicList.add(epicEntry.getValue());
+            }
+        }
+        return epicList;
+    }
+
+    @Override
+    public List<SubTask> getOnlySubtasks() {
+        List subtaskList = new ArrayList<>();
+        for(Map.Entry<Integer, Task> subtaskEntry : tasksMap.entrySet()){
+            if(subtaskEntry.getValue().getTypeTask() == TypeTask.SUBTASK){
+                subtaskList.add(subtaskEntry.getValue());
+            }
+        }
+        return subtaskList;
+    }
+
     @Override
     public Task createNewTask(Task task) {
         int id = ++taskId;
@@ -107,13 +165,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void getTaskById(Integer id) {
+    public Task getTaskById(Integer id) {
         taskclass.Task tempTask = tasksMap.get(id);
         if (tempTask != null) {
             inMemoryHistoryManager.add(tasksMap.get(id));
         } else {
             System.out.println("Такой задачи нет\n");
         }
+        return tempTask;
     }
 
     @Override
@@ -152,7 +211,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteTaskById(int id) {
+    public boolean deleteTaskById(int id) {
         if (tasksMap.get(id) != null) {
             switch ((tasksMap.get(id)).getTypeTask()) {
                 case EPIC:
@@ -176,8 +235,9 @@ public class InMemoryTaskManager implements TaskManager {
             }
             prioritizedTasks.remove(tasksMap.get(id));
         } else {
-            System.out.println("Такой задачи не существует");
+            return false;
         }
+        return true;
     }
 
     @Override

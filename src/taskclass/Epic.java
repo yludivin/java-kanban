@@ -21,6 +21,7 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description, plugTime.format(dateTimeFormatter), 0);
         subTaskListId = new ArrayList<>();
+        this.typeTask = TypeTask.EPIC;
     }
 
     public void calculateEndTime(TaskManager taskManager) {
@@ -84,7 +85,7 @@ public class Epic extends Task {
 
     @Override
     public TypeTask getTypeTask() {
-        return TypeTask.EPIC;
+        return typeTask;
     }
 
     @Override

@@ -10,6 +10,7 @@ public class SubTask extends Task {
     public SubTask(String name, String description,String startTime, long duration, Epic epic) {
         super(name, description,startTime,duration);
         this.epicId = epic.getId();
+        this.typeTask = TypeTask.SUBTASK;
     }
 
     public Integer getEpicId() {
@@ -22,7 +23,7 @@ public class SubTask extends Task {
 
     @Override
     public TypeTask getTypeTask() {
-        return TypeTask.SUBTASK;
+        return typeTask;
     }
 
     @Override

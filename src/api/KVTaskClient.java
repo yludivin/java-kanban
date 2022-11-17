@@ -1,70 +1,45 @@
 package api;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 public class KVTaskClient {
-    private HttpClient client;
-    private URL url;
-    private String apiToken;
 
+    private long apiToken = -1;
+    private final URL url;
+    private final HttpClient client;
 
-    public KVTaskClient(URL url) throws URISyntaxException, IOException, InterruptedException {
-        client = HttpClient.newBuilder().build();
+    public KVTaskClient(URL url) {
+        client = HttpClient.newHttpClient();
         this.url = url;
-        register();
-    }
-
-    private void register() throws URISyntaxException, IOException, InterruptedException {
-        URI uri = new URI(url.toString() + "/register");
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        apiToken = response.body();
-    }
-
-
-    public void put(String key, String json) throws IOException, InterruptedException, URISyntaxException {
-        //POST /save/<ключ>?API_TOKEN=
-        URI uri = new URI(this.url.toString() + "/save/key?API_TOKEN=" + apiToken);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .POST(HttpRequest.BodyPublishers.ofString(json))
-                .build();
-        HttpResponse response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if(response.statusCode() != 200){
-            throw new RuntimeException("Ошибка при отправке запроса");
+        try {
+            apiToken = registerAndGetToken();
+        } catch (IOException | InterruptedException exception) {
+            System.out.println(exception.getMessage());
         }
-
+        System.out.println(apiToken);
     }
-
-    public String load(String key) throws URISyntaxException, IOException, InterruptedException {
-        //GET /load/<ключ>?API_TOKEN=
-        URI uri = new URI(this.url.toString() + "/load/key?API_TOKEN=" + apiToken);
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(uri)
-                .GET()
-                .build();
+    private long registerAndGetToken() throws IOException, InterruptedException {
+        URI uri = URI.create(url.toString() + "register");
+        HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        if(response.statusCode() != 200){
-            throw new RuntimeException("Ошибка при получении ответа");
-        }
-        return response.body();
+        return Long.parseLong(response.body());
     }
 
+    public void put(String key, String json) throws IOException, InterruptedException {
+        URI uri = URI.create(url.toString() + "save/" + key + "/?API_TOKEN=" + apiToken);
+        HttpRequest.BodyPublisher body = HttpRequest.BodyPublishers.ofString(json);
+        HttpRequest request = HttpRequest.newBuilder().uri(uri).POST(body).build();
+        client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+
+    public String load(String key) throws IOException, InterruptedException {
+        URI uri = URI.create(url.toString() + "load/" + key + "/?API_TOKEN=" + apiToken);
+        HttpRequest request = HttpRequest.newBuilder().uri(uri).GET().build();
+        return client.send(request, HttpResponse.BodyHandlers.ofString()).body();
+    }
 }
-
-/*HttpTaskServer -> httpTaskManager -> KVClient -> KVServer и обратно.
-        KVClient создается внутри httpTaskManager
-        KVClient данные передает в HTTPtaskManager, где они уже обрабатываются
-        KVClient и KVServer оба работают с данными в виде строк байтов. В/из json преобразуешь в менеджере*/

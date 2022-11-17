@@ -11,19 +11,33 @@ import java.io.*;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+import java.util.stream.DoubleStream;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private Path path;
+    private static Path path;
     private URI uri;
+    private static String folder;           //второй конструктор
+    private static Path mainManagerFile;    //второй конструктор
     protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     public FileBackedTasksManager(Path path) {
         super();
         this.path = path;
+    }
+
+    public FileBackedTasksManager(String relativePath) {
+        Path file = Paths.get(relativePath);
+        folder = file.getParent().toString();
+        try {
+            path = Files.createFile(file);
+        } catch (IOException exception) {
+            path = file;
+        }
     }
     public FileBackedTasksManager(URI uri) {
         this.uri = uri;
@@ -65,9 +79,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void getTaskById(Integer id) {
-        super.getTaskById(id);
+    public Task getTaskById(Integer id) {
+        Task tempTask = super.getTaskById(id);
         save();
+        return tempTask;
     }
 
     protected void save() {
@@ -156,6 +171,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 setStartEndTimeDuration(task, taskMetadate[5], taskMetadate[7]);
                 break;
         }
+
         return task;
     }
 
@@ -175,6 +191,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     public FileBackedTasksManager loadFromFile(Path file) {
+        //тест под новое
+
         List<String> stringsFile = new LinkedList<>();
         try (FileReader fr = new FileReader(file.toFile());
              BufferedReader br = new BufferedReader(fr)) {
@@ -194,6 +212,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             }
             Task newTask = fromString(s);
             newFbtm.tasksMap.put(newTask.getId(), newTask);
+            if(newTask.getId() > newFbtm.taskId){       //добавил, тк при работе с 0 taskId начинается
+                newFbtm.taskId = newTask.getId() + 1;
+            }
         }
 
         String historyInString = stringsFile.get(stringsFile.size() - 1);

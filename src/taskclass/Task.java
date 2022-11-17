@@ -14,8 +14,9 @@ public class Task {
     protected String description;
     protected Status status;
     protected LocalDateTime startTime;
-    protected LocalDateTime endTime;    //Иван, время конца не могу перенести в эпик. Оно же используется во всех 3 классах
+    protected LocalDateTime endTime;
     protected Duration duration;
+    protected TypeTask typeTask;        //new
     protected DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm dd-MM-yyyy");
 
     public Task(String name, String description, String startTime, long duration) {
@@ -25,6 +26,7 @@ public class Task {
         this.startTime = LocalDateTime.parse(startTime, dateTimeFormatter);
         this.duration = Duration.ofMinutes(duration);
         this.endTime = this.startTime.plusMinutes(duration);
+        this.typeTask = TypeTask.TASK;
     }
 
     public LocalDateTime getEndTime(){
@@ -85,7 +87,7 @@ public class Task {
     }
 
     public TypeTask getTypeTask() {
-        return TypeTask.TASK;
+        return typeTask;
     }
 
     public void setId(int id){

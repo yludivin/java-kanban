@@ -158,19 +158,17 @@ public class Main {
         fbtm2.getTaskById(1);*/
 
         try {
-            KVServer kvServer = new KVServer();
+            HttpTaskServer httpTaskServer = new HttpTaskServer();
+            httpTaskServer.start();
+/*            KVServer kvServer = new KVServer();
             kvServer.start();
             URL url = new URL("http://localhost:8078");
             KVTaskClient kvTaskClient = new KVTaskClient(url);
             kvTaskClient.put("Some Key", "Some Value");
             String kvTaskClientLoad = kvTaskClient.load("Some Key");
-            System.out.println(kvTaskClientLoad);
+            System.out.println(kvTaskClientLoad);*/
 
         } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
 
